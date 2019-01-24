@@ -1,69 +1,86 @@
-public class NBody{
+public class Body{
+  public double xxPos, yyPos, xxVel, yyVel, mass;
+  public String imgFileName;
 
-  public static void main(String[] args){
-    double T = Double.parseDouble(args[0]);
-    double dt = Double.parseDouble(args[1]);
-    String filename = args[2];
-    double radius = readRadius(filename);
-    StdDraw.setScale(-radius, radius);
-    StdDraw.picture(0, 0, "images/starfield.jpg");
-    Planet[] planets = readPlanets(filename);
-    for(int i = 0; i < planets.length; i++){
-      planets[i].draw();
-    }
-    StdDraw.enableDoubleBuffering();
-    for(double time = 0; time < T; time = time + dt){
-      double[] xForces = new double[planets.length];
-      double[] yForces = new double[planets.length];
-      for(int j = 0; j < planets.length; j++){
-        xForces[j] = planets[j].calcNetForceExertedByX(planets);
-        yForces[j] = planets[j].calcNetForceExertedByY(planets);
-      }
-      for(int k = 0; k < planets.length; k++){
-        planets[k].update(dt, xForces[k], yForces[k]);
-      }
-      StdDraw.picture(0, 0, "images/starfield.jpg");
-      for(int l = 0; l < planets.length; l++){
-          planets[l].draw();
-      }
-      StdDraw.show();
-      StdDraw.pause(10);
-    }
-    StdOut.printf("%d\n", planets.length);
-    StdOut.printf("%.2e\n", radius);
-    for (int i = 0; i < planets.length; i++) {
-        StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
-                      planets[i].xxPos, planets[i].yyPos, planets[i].xxVel,
-                      planets[i].yyVel, planets[i].mass, planets[i].imgFileName);
-    }
+  /** Planet constructors */
+  public Body(double xP, double yP, double xV, double yV, double m, String img){
+    xxPos = xP;
+    yyPos = yP;
+    xxVel = xV;
+    yyVel = yV;
+    mass = m;
+    imgFileName = img;
   }
 
-  public static double readRadius(String str){
-    In in = new In(str);
-    int numplanets = in.readInt();
-    double radius = in.readDouble();
-    return radius;
+  public Body(Body p){
+    xxPos = p.xxPos;
+    yyPos = p.yyPos;
+    xxVel = p.xxVel;
+    yyVel = p.yyVel;
+    mass = p.mass;
+    imgFileName = p.imgFileName;
   }
 
-  public static Planet[] readPlanets(String str){
-    In in = new In(str);
-    int numplanets = in.readInt();
-    double radius = in.readDouble();
-    Planet[] planets = new Planet[numplanets];
-    int index = 0;
-    while(index < numplanets){
-      double xP = in.readDouble();
-      double yP = in.readDouble();
-      double xV = in.readDouble();
-      double yV = in.readDouble();
-      double m = in.readDouble();
-      String img = in.readString();
-      planets[index] = new Planet(xP, yP, xV, yV, m, img);
-      index = index + 1;
+  public double calcDistance(Body p){
+    double dxs = (xxPos - p.xxPos) * (xxPos - p.xxPos);
+    double dys = (yyPos - p.yyPos) * (yyPos - p.yyPos);
+    return Math.pow(dxs + dys, .5);
+  }
+
+  public double calcForceExertedBy(Body p){
+    double g = 6.67e-11;
+    double rs = calcDistance(p) * calcDistance(p);
+    return (g * mass * p.mass)/rs;
+  }
+
+  public double calcForceExertedByX(Body p){
+    double tforce = calcForceExertedBy(p);
+    double distance = p.xxPos - xxPos;
+    double radius = calcDistance(p);
+    return (tforce * distance) / radius;
+  }
+
+  public double calcForceExertedByY(Body p){
+    double tforce = calcForceExertedBy(p);
+    double distance = p.yyPos - yyPos;
+    double radius = calcDistance(p);
+    return (tforce * distance) / radius;
+  }
+
+  public double calcNetForceExertedByX(Body[] p){
+    double xforce = 0;
+    for(int i = 0; i < p.length; i++){
+      if(this.equals(p[i])){
+        xforce = xforce + 0;
+      }else{
+        xforce = xforce + this.calcForceExertedByX(p[i]);
+      }
     }
-    return planets;
+    return xforce;
   }
 
+  public double calcNetForceExertedByY(Body[] p){
+    double yforce = 0;
+    for(int i = 0; i < p.length; i++){
+      if(this.equals(p[i])){
+        yforce = yforce + 0;
+      }else{
+        yforce = yforce + this.calcForceExertedByY(p[i]);
+      }
+    }
+    return yforce;
+  }
 
+  public void update(double time, double xxForce, double yyForce){
+    double ax = xxForce / mass;
+    double ay = yyForce / mass;
+    xxVel = xxVel + time * ax;
+    yyVel = yyVel + time * ay;
+    xxPos = xxPos + time * xxVel;
+    yyPos = yyPos + time * yyVel;
+  }
 
+  public void draw(){
+    StdDraw.picture(xxPos, yyPos, "images/" + imgFileName);
+  }
 }
