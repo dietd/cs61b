@@ -20,7 +20,7 @@ public class ArrayDeque<T> {
 
     private void resize() {
         if (size >= deque.length || ((size / deque.length) < 0.25) && deque.length > 8) {
-            int newsize = size * 2;
+            int newsize = size * 4;
             T[] newdeque = (T[]) new Object[newsize];
 
             int newindex = 0;
