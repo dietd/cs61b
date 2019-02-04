@@ -1,28 +1,27 @@
 public class LinkedListDeque<T> {
-    private class dll{
-        public dll prev, next;
-        public T item;
-        public dll(dll prev, T item, dll next){
+
+    private class Dll {
+        private Dll prev, next;
+        private T item;
+        Dll(Dll prev, T item, Dll next) {
             this.prev = prev;
             this.item = item;
             this.next = next;
         }
     }
 
-    private dll sentFront, sentBack;
+    private Dll sentFront, sentBack;
     private int size;
-    private dll getpointer;
 
-    public LinkedListDeque(){
-        sentFront = new dll(null, null, null);
-        sentBack = new dll(sentFront, null, null);
+    public LinkedListDeque() {
+        sentFront = new Dll(null, null, null);
+        sentBack = new Dll(sentFront, null, null);
         sentFront.next = sentBack;
         size = 0;
     }
-
-    public LinkedListDeque(LinkedListDeque other){
-        sentFront = new dll(null, null, null);
-        sentBack = new dll(sentFront, null, null);
+    public LinkedListDeque(LinkedListDeque other) {
+        sentFront = new Dll(null, null, null);
+        sentBack = new Dll(sentFront, null, null);
         sentFront.next = sentBack;
         size = 0;
         int index = 0;
@@ -32,30 +31,30 @@ public class LinkedListDeque<T> {
         }
     }
 
-    public void addFirst(T item){
-        dll first = new dll(sentFront, item, sentFront.next);
+    public void addFirst(T item) {
+        Dll first = new Dll(sentFront, item, sentFront.next);
         sentFront.next.prev = first;
         sentFront.next = first;
         size = size + 1;
     }
 
-    public void addLast(T item){
-        dll last = new dll(sentBack.prev, item, sentBack);
+    public void addLast(T item) {
+        Dll last = new Dll(sentBack.prev, item, sentBack);
         sentBack.prev.next = last;
         sentBack.prev = last;
         size = size + 1;
     }
 
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return sentFront.next.equals(sentBack) && sentBack.prev.equals(sentFront);
     }
 
-    public int size(){
+    public int size() {
         return size;
     }
 
-    public void printDeque(){
-        dll p = sentFront.next;
+    public void printDeque() {
+        Dll p = sentFront.next;
         while(!p.equals(sentBack)){
             System.out.print(p.item);
             System.out.print(" ");
@@ -63,8 +62,8 @@ public class LinkedListDeque<T> {
         }
     }
 
-    public T removeFirst(){
-        if(this.isEmpty()){
+    public T removeFirst() {
+        if (this.isEmpty()) {
             return null;
         }
         T first = sentFront.next.item;
@@ -74,8 +73,8 @@ public class LinkedListDeque<T> {
         return first;
     }
 
-    public T removeLast(){
-        if(this.isEmpty()){
+    public T removeLast() {
+        if (this.isEmpty()) {
             return null;
         }
         T last = sentBack.prev.item;
@@ -85,15 +84,15 @@ public class LinkedListDeque<T> {
         return last;
     }
 
-    public T get(int index){
+    public T get(int index) {
         if(this.isEmpty() || index < 0 || index > size - 1){
             return null;
         }
-        dll p = sentFront.next;
+        Dll p = sentFront.next;
         int i = 0;
         while(i< index){
             p = p.next;
-            if(p.equals(sentBack)){
+            if(p.equals(sentBack)) {
                 return null;
             }
             i = i + 1;
@@ -101,14 +100,16 @@ public class LinkedListDeque<T> {
         return p.item;
     }
 
-    public T getRecursive(int index){
+    public T getRecursive(int index) {
         if(isEmpty() || index < 0 || index > size - 1){ return null;}
-        if(index == 0){
-            T item = getpointer.item;
-            getpointer = sentFront.next;
-            return item;
+        Dll pointer = sentFront.next;
+        return recursiveHelper(index, pointer);
+    }
+
+    public T recursiveHelper(int index, Dll pointer){
+        if (index == 0){
+            return pointer.item;
         }
-        getpointer = getpointer.next;
-        return getRecursive(index - 1);
+        return recursiveHelper(index - 1, pointer.next);
     }
 }
