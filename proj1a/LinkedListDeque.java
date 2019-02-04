@@ -25,7 +25,7 @@ public class LinkedListDeque<T> {
         sentFront.next = sentBack;
         size = 0;
         int index = 0;
-        while(index < other.size()){
+        while (index < other.size()) {
             this.addFirst((T) other.get(index));
             index += 1;
         }
@@ -55,7 +55,7 @@ public class LinkedListDeque<T> {
 
     public void printDeque() {
         Dll p = sentFront.next;
-        while(!p.equals(sentBack)){
+        while (!p.equals(sentBack)) {
             System.out.print(p.item);
             System.out.print(" ");
             p = p.next;
@@ -85,14 +85,14 @@ public class LinkedListDeque<T> {
     }
 
     public T get(int index) {
-        if(this.isEmpty() || index < 0 || index > size - 1){
+        if (this.isEmpty() || index < 0 || index > size - 1) {
             return null;
         }
         Dll p = sentFront.next;
         int i = 0;
-        while(i< index){
+        while (i < index) {
             p = p.next;
-            if(p.equals(sentBack)) {
+            if (p.equals(sentBack)) {
                 return null;
             }
             i = i + 1;
@@ -101,13 +101,15 @@ public class LinkedListDeque<T> {
     }
 
     public T getRecursive(int index) {
-        if(isEmpty() || index < 0 || index > size - 1){ return null;}
+        if (isEmpty() || index < 0 || index > size - 1) {
+            return null;
+        }
         Dll pointer = sentFront.next;
         return recursiveHelper(index, pointer);
     }
 
-    public T recursiveHelper(int index, Dll pointer){
-        if (index == 0){
+    private T recursiveHelper(int index, Dll pointer) {
+        if (index == 0) {
             return pointer.item;
         }
         return recursiveHelper(index - 1, pointer.next);

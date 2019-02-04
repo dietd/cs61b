@@ -36,9 +36,7 @@ public class ADtest {
         System.out.println( (int) ad.get(2) == 11 );
     }
 
-    public static void print(ArrayDeque ad){
-        System.out.println(ad.first + ", " + ad.last + " ");
-    }
+
 
     public static void checkSize(){
         ArrayDeque ad = new ArrayDeque();
@@ -49,7 +47,6 @@ public class ADtest {
         for(int i = 0; i < 5; i++){
             ad.removeFirst();
         }
-        System.out.println(ad.deque.length);
         ad.printDeque();
     }
 }
