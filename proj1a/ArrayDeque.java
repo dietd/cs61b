@@ -19,19 +19,32 @@ public class ArrayDeque<T> {
     }
 
     private void resize() {
-        if (size >= deque.length || ((size / deque.length) < 0.25) && deque.length > 8) {
+        if (size >= deque.length || ((size / deque.length) < 0.15) && deque.length > 8) {
             int newsize = size * 2;
             T[] newdeque = (T[]) new Object[newsize];
 
-            int newindex = 0;
+            /*int newindex = 0;
             for (int i = first; i != last; i = move(i + 1)) {
                 newdeque[newindex] = deque[i];
                 newindex++;
             }
-            newdeque[newindex] = deque[last];
+            newdeque[newindex] = deque[last];*/
+
+            /*this.first = 0;
+            this.last = newindex;
+            this.deque = newdeque;*/
+            if (first > last) {
+                System.arraycopy(deque, first, newdeque, 0, deque.length - first);
+                System.arraycopy(deque, 0, newdeque, deque.length - first, last + 1);
+            } else {
+                System.arraycopy(deque, first, newdeque, 0, last - first + 1);
+            }
+            /*for (int i = 0; i < newdeque.length; i++) {
+                System.out.print(newdeque[i] + " ");
+            }*/
 
             this.first = 0;
-            this.last = newindex;
+            this.last = size - 2;
             this.deque = newdeque;
         }
     }
