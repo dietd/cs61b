@@ -19,19 +19,21 @@ public class ArrayDeque<T> {
     }
 
     private void resize() {
-        int newsize = size * 2;
-        T[] newdeque = (T[]) new Object[newsize];
+        if (size >= deque.length || ((size / deque.length) < 0.25) && deque.length > 8) {
+            int newsize = size * 2;
+            T[] newdeque = (T[]) new Object[newsize];
 
-        int newindex = 0;
-        for (int i = first; i != last; i = move(i + 1)) {
-            newdeque[newindex] = deque[i];
-            newindex++;
+            int newindex = 0;
+            for (int i = first; i != last; i = move(i + 1)) {
+                newdeque[newindex] = deque[i];
+                newindex++;
+            }
+            newdeque[newindex] = deque[last];
+
+            this.first = 0;
+            this.last = newindex;
+            this.deque = newdeque;
         }
-        newdeque[newindex] = deque[last];
-
-        this.first = 0;
-        this.last = newindex;
-        this.deque = newdeque;
     }
 
     private int move(int index) {
@@ -40,18 +42,14 @@ public class ArrayDeque<T> {
 
     public void addFirst(T item) {
         size += 1;
-        if (size >= deque.length) {
-            resize();
-        }
+        resize();
         first = move(first - 1);
         deque[first] = item;
     }
 
     public void addLast(T item) {
         size += 1;
-        if (size >= deque.length) {
-            resize();
-        }
+        resize();
         last = move(last + 1);
         deque[last] = item;
     }
@@ -76,10 +74,7 @@ public class ArrayDeque<T> {
             return null;
         }
         size -= 1;
-        if ((size / deque.length) < 0.25) {
-            resize();
-        }
-
+        resize();
         T item = deque[first];
         deque[first] = null;
         first = move(first + 1);
@@ -91,9 +86,7 @@ public class ArrayDeque<T> {
             return null;
         }
         size -= 1;
-        if ((size / deque.length) < 0.25) {
-            resize();
-        }
+        resize();
         T item = deque[last];
         deque[last] = null;
         last = move(last - 1);
