@@ -40,7 +40,7 @@ public class ArrayDeque<T> {
 
     public void addFirst(T item) {
         size += 1;
-        if (size == deque.length) {
+        if (size >= deque.length) {
             resize();
         }
         first = move(first - 1);
@@ -49,7 +49,7 @@ public class ArrayDeque<T> {
 
     public void addLast(T item) {
         size += 1;
-        if (size == deque.length) {
+        if (size >= deque.length) {
             resize();
         }
         last = move(last + 1);
