@@ -89,9 +89,11 @@ public class ArrayDeque<T> {
             return null;
         }
         size -= 1;
-        if ((size / deque.length) < 0.05) {
-            resize(size * 2);
+
+        if ((size / deque.length) < 0.25 && deque.length >= 16) {
+            resize(deque.length / 2 + 1);
         }
+
         T item = deque[first];
         deque[first] = null;
         first = move(first + 1);
@@ -103,8 +105,9 @@ public class ArrayDeque<T> {
             return null;
         }
         size -= 1;
-        if ((size / deque.length) < 0.05) {
-            resize(size * 2);
+
+        if ((size / deque.length) < 0.25 && deque.length >=16) {
+            resize(deque.length / 2 + 1);
         }
 
         T item = deque[last];
