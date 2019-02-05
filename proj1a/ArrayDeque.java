@@ -5,7 +5,9 @@ public class ArrayDeque<T> {
 
     public ArrayDeque() {
         deque = (T[]) new Object[8];
-        first = 0; last = 7; size = 0;
+        first = 0;
+        last = 7;
+        size = 0;
     }
     
     public ArrayDeque(ArrayDeque other) {
@@ -19,7 +21,7 @@ public class ArrayDeque<T> {
     }
 
     private void resize() {
-        if (size >= deque.length || ((size / deque.length) < 0.15) && deque.length > 8) {
+        if (size >= deque.length || ((size / deque.length) < 0.25) && deque.length > 8) {
             int newsize = size * 2;
             T[] newdeque = (T[]) new Object[newsize];
 
@@ -28,24 +30,28 @@ public class ArrayDeque<T> {
                 newdeque[newindex] = deque[i];
                 newindex++;
             }
-            newdeque[newindex] = deque[last];*/
+            newdeque[newindex] = deque[last];
 
-            /*this.first = 0;
+            this.first = 0;
             this.last = newindex;
-            this.deque = newdeque;*/
+            this.deque = newdeque; */
+
+            //System.out.println(first + ", " + last);
+            //printDeque();
+
             if (first > last) {
                 System.arraycopy(deque, first, newdeque, 0, deque.length - first);
                 System.arraycopy(deque, 0, newdeque, deque.length - first, last + 1);
+                last = deque.length - first + last;
             } else {
                 System.arraycopy(deque, first, newdeque, 0, last - first + 1);
+                last = last - first;
             }
-            /*for (int i = 0; i < newdeque.length; i++) {
-                System.out.print(newdeque[i] + " ");
-            }*/
 
-            this.first = 0;
-            this.last = size - 2;
-            this.deque = newdeque;
+            //System.out.print('\n');
+
+            first = 0;
+            deque = newdeque;
         }
     }
 
@@ -80,6 +86,10 @@ public class ArrayDeque<T> {
             System.out.print(deque[i] + " ");
         }
         System.out.print(deque[last]);
+        /*for (int i = 0; i < deque.length; i++){
+            System.out.print(deque[i] + " ");
+        }
+        System.out.print('\n'); */
     }
 
     public T removeFirst() {
