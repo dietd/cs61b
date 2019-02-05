@@ -20,8 +20,7 @@ public class ArrayDeque<T> {
         size = other.size();
     }
 
-    private void resize() {
-        int newsize = size * 3;
+    private void resize(int newsize) {
         T[] newdeque = (T[]) new Object[newsize];
 
         /* int newindex = 0;
@@ -55,7 +54,7 @@ public class ArrayDeque<T> {
     public void addFirst(T item) {
         size += 1;
         if (size == deque.length) {
-            resize();
+            resize(size * 2);
         }
         first = move(first - 1);
         deque[first] = item;
@@ -64,7 +63,7 @@ public class ArrayDeque<T> {
     public void addLast(T item) {
         size += 1;
         if (size == deque.length) {
-            resize();
+            resize(size * 2);
         }
         last = move(last + 1);
         deque[last] = item;
@@ -91,7 +90,7 @@ public class ArrayDeque<T> {
         }
         size -= 1;
         if ((size / deque.length) < 0.1 && deque.length >= 16) {
-            resize();
+            resize(size * 2);
         }
         T item = deque[first];
         deque[first] = null;
@@ -105,7 +104,7 @@ public class ArrayDeque<T> {
         }
         size -= 1;
         if ((size / deque.length) < 0.1 && deque.length >= 16) {
-            resize();
+            resize(size);
         }
 
         T item = deque[last];
