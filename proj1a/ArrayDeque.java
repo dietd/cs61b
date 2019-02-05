@@ -21,38 +21,31 @@ public class ArrayDeque<T> {
     }
 
     private void resize() {
-        if (size >= deque.length || ((size / deque.length) < 0.25) && deque.length > 8) {
-            int newsize = size * 2;
-            T[] newdeque = (T[]) new Object[newsize];
+        int newsize = size * 2;
+        T[] newdeque = (T[]) new Object[newsize];
 
-            /*int newindex = 0;
-            for (int i = first; i != last; i = move(i + 1)) {
-                newdeque[newindex] = deque[i];
-                newindex++;
-            }
-            newdeque[newindex] = deque[last];
+        /* int newindex = 0;
+           for (int i = first; i != last; i = move(i + 1)) {
+               newdeque[newindex] = deque[i];
+               newindex++;
+           }
+           newdeque[newindex] = deque[last];
 
-            this.first = 0;
-            this.last = newindex;
-            this.deque = newdeque; */
+           this.first = 0;
+           this.last = newindex;
+           this.deque = newdeque; */
 
-            //System.out.println(first + ", " + last);
-            //printDeque();
-
-            if (first > last) {
-                System.arraycopy(deque, first, newdeque, 0, deque.length - first);
-                System.arraycopy(deque, 0, newdeque, deque.length - first, last + 1);
-                last = deque.length - first + last;
-            } else {
-                System.arraycopy(deque, first, newdeque, 0, last - first + 1);
-                last = last - first;
-            }
-
-            //System.out.print('\n');
-
-            first = 0;
-            deque = newdeque;
+        if (first > last) {
+            System.arraycopy(deque, first, newdeque, 0, deque.length - first);
+            System.arraycopy(deque, 0, newdeque, deque.length - first, last + 1);
+            last = deque.length - first + last;
+        } else {
+            System.arraycopy(deque, first, newdeque, 0, last - first + 1);
+            last = last - first;
         }
+
+        first = 0;
+        deque = newdeque;
     }
 
     private int move(int index) {
@@ -61,14 +54,18 @@ public class ArrayDeque<T> {
 
     public void addFirst(T item) {
         size += 1;
-        resize();
+        if (size == deque.length) {
+            resize();
+        }
         first = move(first - 1);
         deque[first] = item;
     }
 
     public void addLast(T item) {
         size += 1;
-        resize();
+        if (size == deque.length) {
+            resize();
+        }
         last = move(last + 1);
         deque[last] = item;
     }
@@ -86,10 +83,6 @@ public class ArrayDeque<T> {
             System.out.print(deque[i] + " ");
         }
         System.out.print(deque[last]);
-        /*for (int i = 0; i < deque.length; i++){
-            System.out.print(deque[i] + " ");
-        }
-        System.out.print('\n'); */
     }
 
     public T removeFirst() {
@@ -97,7 +90,9 @@ public class ArrayDeque<T> {
             return null;
         }
         size -= 1;
-        resize();
+        if ((size / deque.length) < 0.25 && deque.length >= 16) {
+            resize();
+        }
         T item = deque[first];
         deque[first] = null;
         first = move(first + 1);
@@ -109,7 +104,10 @@ public class ArrayDeque<T> {
             return null;
         }
         size -= 1;
-        resize();
+        if ((size / deque.length) < 0.15 && deque.length >= 16) {
+            resize();
+        }
+
         T item = deque[last];
         deque[last] = null;
         last = move(last - 1);
