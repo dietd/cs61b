@@ -104,7 +104,7 @@ public class ArrayDeque<T> {
         }
         size -= 1;
         if ((size / deque.length) < 0.1 && deque.length >= 16) {
-            resize(size);
+            resize(size * 2);
         }
 
         T item = deque[last];
