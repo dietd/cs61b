@@ -90,13 +90,12 @@ public class ArrayDeque<T> {
         }
         size -= 1;
 
-        if ((size / deque.length) < 0.25 && deque.length >= 16) {
-            resize(size * 2);
-        }
-
         T item = deque[first];
         deque[first] = null;
         first = move(first + 1);
+        if (size  < deque.length / 4  && deque.length >= 16) {
+            resize(size + 1);
+        }
         return item;
     }
 
@@ -105,14 +104,13 @@ public class ArrayDeque<T> {
             return null;
         }
         size -= 1;
-
-        if ((size / deque.length) < 0.25 && deque.length >=16) {
-            resize(size * 2);
-        }
-
         T item = deque[last];
         deque[last] = null;
         last = move(last - 1);
+
+        if (size < deque.length / 4 && deque.length >=16) {
+            resize(size * 2);
+        }
         return item;
     }
 

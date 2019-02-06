@@ -1,8 +1,9 @@
 public class TestAgain {
     public static void main(String[] args){
-        for(int i = 1; i < 15; i++){
+        /*for(int i = 1; i < 15; i++){
             randomCalls(Math.pow(2, i));
-        }
+        }*/
+        trytoFuckItUp(512000);
     }
 
     public static void randomCalls(double num){
