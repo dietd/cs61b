@@ -4,6 +4,10 @@ import org.junit.Test;
 
 public class IntListTest {
 
+    public static void main(String... args) {
+        jh61b.junit.TestRunner.runTests("all", IntListTest.class);
+    }
+
     /**
      * Example test that verifies correctness of the IntList.list static
      * method. The main point of this is to convince you that
@@ -64,6 +68,13 @@ public class IntListTest {
         IntList exp = IntList.list(1, 2, 3, 4, 5, 6);
         assertEquals(exp, IntList.catenate(A, B));
         assertEquals(IntList.list(1, 2, 3), A);
+    }
+
+    @Test
+    public void testReverse() {
+        IntList A = IntList.list(1, 2, 3, 4);
+        assertEquals(A, IntList.reverse(IntList.list(4, 3, 2, 1)));
+        assertEquals(null, IntList.reverse(null));
     }
 
     /** If you're running this from the command line, you'll need
