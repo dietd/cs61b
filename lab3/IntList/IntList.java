@@ -149,7 +149,7 @@ public class IntList {
      * Returns a new IntList containing the ints in ARGS. You are not
      * expected to read or understand this method.
      */
-    public static IntList list(Integer... args) {
+    public static IntList of(Integer... args) {
         IntList result, p;
 
         if (args.length > 0) {
