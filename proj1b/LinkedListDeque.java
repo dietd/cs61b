@@ -19,6 +19,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         sentFront.next = sentBack;
         size = 0;
     }
+
     public LinkedListDeque(LinkedListDeque other) {
         sentFront = new Dll(null, null, null);
         sentBack = new Dll(sentFront, null, null);

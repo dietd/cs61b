@@ -5,6 +5,8 @@ public interface Deque<T> {
     T removeLast();
     void printDeque();
     int size();
-    boolean isEmpty();
+    default boolean isEmpty() {
+        return size() == 0;
+    }
     T get(int index);
 }
