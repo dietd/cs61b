@@ -8,19 +8,19 @@ A:
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: How organized it was
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: Nothing, it was pretty spot on to the solution, perhaps better variable choice and more elegant resizing would have helped
 
 Q: What did you learn by talking to your partner about writing ArrayDeque?
 
-A:
+A: Nothing lol
 
 Q: What do you wish you would have known before writing ArrayDeque, if anything?
 
-A:
+A: Nothing
 
 Q: If you wrote ArrayDeque again, what would you do differently, if anything?
 
@@ -36,15 +36,15 @@ A:
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: I felt that it was the best it could be especially with all the sentinels
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: I didn't use a circular sentinel so I ended up having 2 sentinels instead
 
 Q: What did you learn by talking to your partner about writing LinkedListDeque?
 
-A:
+A: Nothing
 
 Q: What do you wish you would have known before writing LinkedListDeque, if anything?
 
@@ -60,4 +60,4 @@ Meta:
 
 Q: Did you like this design review process? Anything we should do differently next time?
 
-A: 
+A: No I didn't like this review process.
