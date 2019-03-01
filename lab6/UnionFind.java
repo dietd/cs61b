@@ -12,14 +12,14 @@ public class UnionFind {
         parent = new int[n];
         size = new int[n];
         for (int i = 0; i < n; i += 1) {
-            parent[n] = -1;
-            size[n] = 1;
+            parent[i] = -1;
+            size[i] = 1;
         }
     }
 
     /* Throws an exception if v1 is not a valid index. */
     private void validate(int vertex) {
-        if (vertex < 0 || vertex > parent.length - 1) {
+        if (vertex < 0 || vertex >= parent.length) {
             throw new IllegalArgumentException();
         }
     }
@@ -34,7 +34,7 @@ public class UnionFind {
        negative size of the tree for which v1 is the root. */
     public int parent(int v1) {
         validate(v1);
-        if (v1 == -1) {
+        if (parent[v1] == -1) {
             return -size[v1];
         }
         return parent[v1];
@@ -42,10 +42,13 @@ public class UnionFind {
 
     /* Returns true if nodes v1 and v2 are connected. */
     public boolean connected(int v1, int v2) {
+
         validate(v1);
         validate(v2);
+
         List<Integer> parentsv1 = new ArrayList<>();
         List<Integer> parentsv2 = new ArrayList<>();
+
         while (parent[v1] != -1) {
             parentsv1.add(v1);
             v1 = parent[v1];
