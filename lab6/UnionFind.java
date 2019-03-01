@@ -1,5 +1,5 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UnionFind {
 
@@ -46,29 +46,22 @@ public class UnionFind {
         validate(v1);
         validate(v2);
 
-        List<Integer> parentsv1 = new ArrayList<>();
-        List<Integer> parentsv2 = new ArrayList<>();
+        Set<Integer> parentsv1 = new HashSet<>();
+        Set<Integer> parentsv2 = new HashSet<>();
 
-        while (parent[v1] != -1) {
+        while (v1 != -1) {
             parentsv1.add(v1);
             v1 = parent[v1];
         }
 
-        while (parent[v2] != -1) {
+        while (v2 != -1) {
             parentsv2.add(v2);
             v2 = parent[v2];
         }
 
-        /* Checks if parentsv1 has item contained in parentsv2*/
-        for (int i : parentsv1) {
-            for (int j : parentsv2) {
-                if (i == j) {
-                    return true;
-                }
-            }
-        }
+        parentsv1.retainAll(parentsv2);
 
-        return false;
+        return !parentsv1.isEmpty();
     }
 
     /* Connects two elements v1 and v2 together. v1 and v2 can be any valid 
@@ -77,6 +70,14 @@ public class UnionFind {
        vertex with itself or vertices that are already connected should not 
        change the sets but may alter the internal structure of the data. */
     public void union(int v1, int v2) {
+
+        validate(v1);
+        validate(v2);
+
+        if (connected(v1, v2)) {
+            return;
+        }
+
         if (sizeOf(v1) <= sizeOf(v2)) {
             parent[find(v2)] = find(v1);
         } else {
