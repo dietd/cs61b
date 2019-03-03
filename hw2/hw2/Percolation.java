@@ -2,12 +2,17 @@ package hw2;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Percolation {
 
     private int openSites = 0;
     private int size;
     private int N;
     private WeightedQuickUnionUF gridUnions;
+    private Set<Integer> bottomRow = new HashSet<>();
+    private boolean percolates = false;
     private boolean[][] grid;
 
     // create N-by-N grid, with all sites initially blocked
@@ -19,11 +24,10 @@ public class Percolation {
 
         this.N = N;
         size = N * N;
-        gridUnions = new WeightedQuickUnionUF(size + 2);
+        gridUnions = new WeightedQuickUnionUF(size + 1);
         grid = new boolean[N][N];
         for(int i = 0; i < N; i += 1) {
             gridUnions.union(i, size);
-            gridUnions.union(size - 1 - i, size + 1);
         }
     }
 
@@ -55,6 +59,7 @@ public class Percolation {
             if (check(row - 1)) {
                 if (isOpen(row - 1, col)) {
                     gridUnions.union(row * N + col,(row - 1) * N + col);
+
                 }
             }
 
@@ -93,11 +98,15 @@ public class Percolation {
         outofBounds(row);
         outofBounds(col);
 
-        if (!gridUnions.connected(size, row * N + col)) {
-            return false;
+        boolean full = gridUnions.connected(size, row * N + col) && grid[row][col];
+
+        if (row == N - 1) {
+            if (full) {
+                percolates = true;
+            }
         }
 
-        return gridUnions.connected(size, row * N + col) && grid[row][col];
+        return full;
     }
 
     // number of open sites
@@ -107,7 +116,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return gridUnions.connected(size, size + 1);
+        return percolates;
     }
 
     public static void main(String[] args) {
