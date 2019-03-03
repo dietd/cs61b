@@ -31,7 +31,7 @@ public class Percolation {
         for (int i = 0; i < N; i += 1) {
             forBackwash.union(i, size);
             gridUnions.union(i, size);
-            gridUnions.union(i, size + 1);
+            gridUnions.union(size - 1 - i, size + 1);
         }
     }
 
