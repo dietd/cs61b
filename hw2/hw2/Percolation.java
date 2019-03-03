@@ -11,8 +11,9 @@ public class Percolation {
     private int size;
     private int N;
     private WeightedQuickUnionUF gridUnions;
+    private WeightedQuickUnionUF forBackwash;
     private Set<Integer> bottomRow = new HashSet<>();
-    private boolean percolates = false;
+    private boolean perlocate = false;
     private boolean[][] grid;
 
     // create N-by-N grid, with all sites initially blocked
@@ -24,10 +25,13 @@ public class Percolation {
 
         this.N = N;
         size = N * N;
-        gridUnions = new WeightedQuickUnionUF(size + 1);
+        gridUnions = new WeightedQuickUnionUF(size + 2);
+        forBackwash = new WeightedQuickUnionUF(size + 1);
         grid = new boolean[N][N];
-        for(int i = 0; i < N; i += 1) {
+        for (int i = 0; i < N; i += 1) {
+            forBackwash.union(i, size);
             gridUnions.union(i, size);
+            gridUnions.union(i, size + 1);
         }
     }
 
@@ -58,26 +62,29 @@ public class Percolation {
 
             if (check(row - 1)) {
                 if (isOpen(row - 1, col)) {
-                    gridUnions.union(row * N + col,(row - 1) * N + col);
-
+                    gridUnions.union(row * N + col, (row - 1) * N + col);
+                    forBackwash.union(row * N + col, (row - 1) * N + col);
                 }
             }
 
             if (check(row + 1)) {
                 if (isOpen(row + 1, col)) {
                     gridUnions.union(row * N + col, (row + 1) * N + col);
+                    forBackwash.union(row * N + col, (row + 1) * N + col);
                 }
             }
 
             if (check(col + 1)) {
                 if (isOpen(row, col + 1)) {
                     gridUnions.union(row * N + col, row * N + col + 1);
+                    forBackwash.union(row * N + col, row * N + col + 1);
                 }
             }
 
             if (check(col - 1)) {
                 if (isOpen(row, col - 1)) {
                     gridUnions.union(row * N + col, row * N + col - 1);
+                    forBackwash.union(row * N + col, row * N + col - 1);
                 }
             }
         }
@@ -98,15 +105,7 @@ public class Percolation {
         outofBounds(row);
         outofBounds(col);
 
-        boolean full = gridUnions.connected(size, row * N + col) && grid[row][col];
-
-        if (row == N - 1) {
-            if (full) {
-                percolates = true;
-            }
-        }
-
-        return full;
+        return forBackwash.connected(size, row * N + col) && grid[row][col];
     }
 
     // number of open sites
@@ -116,7 +115,7 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return percolates;
+        return gridUnions.connected(size, size + 1);
     }
 
     public static void main(String[] args) {
