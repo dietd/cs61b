@@ -115,6 +115,9 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
+        if (openSites == 0) {
+            return false;
+        }
         return gridUnions.connected(size, size + 1);
     }
 

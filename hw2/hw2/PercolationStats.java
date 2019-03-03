@@ -25,7 +25,7 @@ public class PercolationStats {
                 blocked.add(i);
             }
 
-            while (p.percolates()) {
+            while (!p.percolates()) {
                 int toOpen = StdRandom.uniform(blocked.size());
                 int row = Math.floorDiv(toOpen, N);
                 int col = Math.floorMod(toOpen, N);
