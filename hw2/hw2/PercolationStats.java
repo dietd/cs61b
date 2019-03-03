@@ -26,11 +26,13 @@ public class PercolationStats {
             }
 
             while (!p.percolates()) {
-                int toOpen = StdRandom.uniform(blocked.size());
+                System.out.println(blocked.size());
+                int index = StdRandom.uniform(blocked.size());
+                int toOpen = blocked.get(index);
                 int row = Math.floorDiv(toOpen, N);
                 int col = Math.floorMod(toOpen, N);
                 p.open(row, col);
-                blocked.remove(toOpen);
+                blocked.remove(index);
             }
 
             trials[t] = (double) p.numberOfOpenSites() / (double) (N * N);
