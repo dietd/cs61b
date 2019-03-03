@@ -26,7 +26,6 @@ public class PercolationStats {
             }
 
             while (!p.percolates()) {
-                System.out.println(blocked.size());
                 int index = StdRandom.uniform(blocked.size());
                 int toOpen = blocked.get(index);
                 int row = Math.floorDiv(toOpen, N);
