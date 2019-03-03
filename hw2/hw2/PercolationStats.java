@@ -1,7 +1,5 @@
 package hw2;
 
-import java.util.ArrayList;
-import java.util.List;
 import edu.princeton.cs.introcs.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
@@ -20,18 +18,13 @@ public class PercolationStats {
         for (int t = 0; t < T; t += 1) {
 
             Percolation p = pf.make(N);
-            List<Integer> blocked = new ArrayList<>();
-            for (int i = 0; i < (N * N); i += 1) {
-                blocked.add(i);
-            }
+
 
             while (!p.percolates()) {
-                int index = StdRandom.uniform(blocked.size());
-                int toOpen = blocked.get(index);
-                int row = Math.floorDiv(toOpen, N);
-                int col = Math.floorMod(toOpen, N);
+                int index = StdRandom.uniform(N * N);
+                int row = Math.floorDiv(index, N);
+                int col = Math.floorMod(index, N);
                 p.open(row, col);
-                blocked.remove(index);
             }
 
             trials[t] = (double) p.numberOfOpenSites() / (double) (N * N);
