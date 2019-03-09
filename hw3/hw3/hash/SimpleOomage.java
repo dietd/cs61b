@@ -33,11 +33,26 @@ public class SimpleOomage implements Oomage {
         if (!USE_PERFECT_HASH) {
             return red + green + blue;
         } else {
-            int r = Math.floorDiv(red, 100) * 31 + Math.floorMod(Math.floorDiv(red, 10), 10) * 31 * 31 + Math.floorMod(red, 10) * 31 * 31 * 31;
-            int g = Math.floorDiv(green, 100) * 31 * 31 * 31 * 31 + Math.floorMod(Math.floorDiv(green, 10), 10) * 31 * 31 * 31 * 31 * 31 + Math.floorMod(green, 10) * 31 * 31 * 31 * 31 * 31 * 31;
-            int b = Math.floorDiv(blue, 100) * 31 * 31 * 31 * 31 * 31 * 31 * 31 + Math.floorMod(Math.floorDiv(blue, 10), 10) * 31 * 31 * 31 * 31 * 31 * 31 * 31 * 31 + Math.floorMod(blue, 10) * 31 * 31 * 31 * 31 * 31 * 31 * 31 * 31 * 31;
-            return r + b + g;
+            int r = hashHelper(red, 1, 2, 3);
+            int g = hashHelper(green, 4, 5, 6);
+            int b = hashHelper(blue, 7, 8, 9);
+            return r + g + b;
         }
+    }
+
+    private int hashHelper(int x, int pow1, int pow2, int pow3) {
+        int a = Math.floorDiv(x, 100) * powTO(pow1);
+        int b = Math.floorMod(Math.floorDiv(x, 10), 10) * powTO(pow2);
+        int c = Math.floorMod(x, 10) * powTO(pow3);
+        return a + b + c;
+    }
+
+    private int powTO(int pow) {
+        int rv = 1;
+        for (int i = 0; i < pow; i += 1) {
+            rv = rv * 31;
+        }
+        return rv;
     }
 
     public SimpleOomage(int r, int g, int b) {
