@@ -10,26 +10,35 @@ public class SimpleOomage implements Oomage {
     protected int blue;
 
     private static final double WIDTH = 0.01;
-    private static final boolean USE_PERFECT_HASH = false;
+    private static final boolean USE_PERFECT_HASH = true;
 
     @Override
     public boolean equals(Object o) {
-        // TODO: Write this method.
-        return false;
+        if (o == this) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        SimpleOomage other = (SimpleOomage) o;
+        return (this.red == other.red) && (this.green == other.green) && (this.blue == other.blue);
     }
 
-    /* Uncomment this method after you've written
-       equals and failed the testHashCodeAndEqualsConsistency
-       test.
+
     @Override
     public int hashCode() {
         if (!USE_PERFECT_HASH) {
             return red + green + blue;
         } else {
-            // TODO: Write a perfect hash function for Simple Oomages.
-            return 0;
+            int r = Math.floorDiv(red, 100) * 31 + Math.floorMod(Math.floorDiv(red, 10), 10) * 31 * 31 + Math.floorMod(red, 10) * 31 * 31 * 31;
+            int g = Math.floorDiv(green, 100) * 31 * 31 * 31 * 31 + Math.floorMod(Math.floorDiv(green, 10), 10) * 31 * 31 * 31 * 31 * 31 + Math.floorMod(green, 10) * 31 * 31 * 31 * 31 * 31 * 31;
+            int b = Math.floorDiv(blue, 100) * 31 * 31 * 31 * 31 * 31 * 31 * 31 + Math.floorMod(Math.floorDiv(blue, 10), 10) * 31 * 31 * 31 * 31 * 31 * 31 * 31 * 31 + Math.floorMod(blue, 10) * 31 * 31 * 31 * 31 * 31 * 31 * 31 * 31 * 31;
+            return r + b + g;
         }
-    }*/
+    }
 
     public SimpleOomage(int r, int g, int b) {
         if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
