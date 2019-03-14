@@ -2,108 +2,93 @@ package bearmaps;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 public class ArrayHeapMinPQTest {
 
     @Test
-    public void randomTest() {
-        NaiveMinPQ<Integer> nm = new NaiveMinPQ<>();
-        ArrayHeapMinPQ<Integer> ahm = new ArrayHeapMinPQ<>();
-        int i = 0;
-        ArrayList<Integer> nums = new ArrayList<>();
+    public void testAdd() {
+        NaiveMinPQ<String> nm = new NaiveMinPQ<>();
+        ArrayHeapMinPQ<String> ahm = new ArrayHeapMinPQ<>();
 
-        while (i < 1000) {
+        nm.add("t", 10);
+        ahm.add("t", 10);
 
-            int num = (int) Math.floor(Math.random() * 100);
-            double weight = Math.floor(Math.random() * 1000);
-            int action = (int) Math.floor(Math.random() * 5);
+        nm.add("e", 10);
+        ahm.add("e", 10);
 
-            if (action == 0) {
-                nm.add(num, weight);
-                ahm.add(num, weight);
-                nums.add(num);
+        assertEquals(nm.getSmallest(), ahm.getSmallest());
+
+        nm.add("s", 0.01);
+        ahm.add("s", 0.01);
+
+        assertEquals(nm.getSmallest(), ahm.getSmallest());
+    }
+
+    @Test
+    public void testRemove() {
+
+        NaiveMinPQ<String> nm = new NaiveMinPQ<>();
+        ArrayHeapMinPQ<String> ahm = new ArrayHeapMinPQ<>();
+
+        Set<String> numSet = new HashSet<>();
+
+        for (int i = 0; i < 1000; i += 1) {
+            double weight = Math.random() * 1000;
+            String item = Integer.toString((int) Math.floor(Math.random() * 1000));
+
+            if (!numSet.contains(item)) {
+                nm.add(item, weight);
+                ahm.add(item, weight);
+                numSet.add(item);
             }
+        }
 
-            if (action == 1) {
-                if (nums.size() > 0) {
-                    int actual = nm.removeSmallest();
-                    assertEquals(nm.removeSmallest(), ahm.removeSmallest());
-                    nums.remove((Object) actual);
-                }
-            }
-
-            if (action == 2) {
-                if (nums.size() > 0) {
-                    assertEquals(nm.getSmallest(), ahm.getSmallest());
-                }
-            }
-
-            if (action == 3) {
-                if (!nums.isEmpty()) {
-                    int randNum = (int) Math.floor(Math.random() * nums.size());
-                    int item = nums.get(randNum);
-                    nm.changePriority(item, weight);
-                    ahm.changePriority(item, weight);
-                }
-            }
-
-            if (action == 4) {
-                assertEquals(nm.size(), ahm.size());
-            }
+        for (int j = 0; j < ahm.size(); j += 1) {
+            assertEquals(nm.removeSmallest(), ahm.removeSmallest());
         }
     }
 
     @Test
-    public void sanityRemove() {
-        NaiveMinPQ<Integer> nm = new NaiveMinPQ<>();
-        ArrayHeapMinPQ<Integer> ahm = new ArrayHeapMinPQ<>();
+    public void testChangePriority() {
+        NaiveMinPQ<String> nm = new NaiveMinPQ<>();
+        ArrayHeapMinPQ<String> ahm = new ArrayHeapMinPQ<>();
 
-        nm.add(1, 5);
-        nm.add(2, 1);
-        nm.add(3, 2);
-        nm.add(4, 4);
-        nm.add(5, 3);
+        nm.add("Rem", 1);
+        ahm.add("Rem", 1);
+        nm.add("Emilia", 10);
+        ahm.add("Emilia", 10);
 
-        ahm.add(1, 5);
-        ahm.add(2, 1);
-        ahm.add(3, 2);
-        ahm.add(4, 4);
-        ahm.add(5, 3);
+        assertEquals(nm.getSmallest(), ahm.getSmallest());
+        nm.changePriority("Rem", 100);
+        ahm.changePriority("Rem", 100);
 
-        assertEquals(nm.removeSmallest(), ahm.removeSmallest());
-        assertEquals(nm.removeSmallest(), ahm.removeSmallest());
-        assertEquals(nm.removeSmallest(), ahm.removeSmallest());
-        assertEquals(nm.removeSmallest(), ahm.removeSmallest());
-        assertEquals(nm.removeSmallest(), ahm.removeSmallest());
+        assertEquals(nm.getSmallest(), ahm.getSmallest());
+    }
 
-
-        /** Add Random Stuff */
-        nm = new NaiveMinPQ<>();
-        ahm = new ArrayHeapMinPQ<>();
-
-        Set<Double> numSet = new HashSet<>();
-
-
-            for (int i = 0; i < 1000; i += 1) {
-                double weight = Math.random() * 1000;
-
-                /**while (numSet.contains(weight)) {
-                    weight = Math.random() * 1000;
-                } */
-
-                nm.add(i, weight);
-                ahm.add(i, weight);
-                numSet.add(weight);
+    @Test
+    public void randomTest() {
+        NaiveMinPQ<String> nm = new NaiveMinPQ<>();
+        ArrayHeapMinPQ<String> ahm = new ArrayHeapMinPQ<>();
+        int iterations = 1000000;
+        for (int i = 0; i < iterations; i += 1) {
+            int act = (int) Math.floor(Math.random() * 2);
+            double p = Math.random() * 1000;
+            String item = Integer.toString((int) Math.floor(Math.random() * 100));
+            if (act == 0 && !nm.contains(item)) {
+                nm.add(item, p);
+                ahm.add(item, p);
+                assertEquals(nm.getSmallest(), ahm.getSmallest());
+            } else if (act == 0 && nm.contains(item)) {
+                nm.changePriority(item, p);
+                ahm.changePriority(item, p);
+                assertEquals(nm.getSmallest(), ahm.getSmallest());
+            } else if (act == 1 && nm.size() > 0) {
+                assertEquals(nm.removeSmallest(), ahm.removeSmallest());
             }
-
-            for (int j = 0; j < 1000; j += 1) {
-                assertEquals("Iteration: " + j, nm.removeSmallest(), ahm.removeSmallest());
-            }
+        }
     }
 }

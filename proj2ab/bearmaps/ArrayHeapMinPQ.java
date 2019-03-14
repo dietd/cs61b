@@ -29,16 +29,6 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         size += 1;
     }
 
-    private void resize() {
-        if (size == heap.length || size < heap.length / 4 && heap.length > 16) {
-            T[] newHeap = (T[]) new Object[size * 2];
-            for (int i = 0; i < size; i += 1) {
-                newHeap[i] = heap[i];
-            }
-            heap = newHeap;
-        }
-    }
-
     public boolean contains(T item) {
         if (size == 0) {
             throw new NoSuchElementException();
@@ -57,19 +47,14 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         if (size == 0) {
             throw new NoSuchElementException();
         }
-
-
-
         T item = heap[0];
         heap[0] = null;
-        swap(size - 1, 0);
         pmap.remove(item);
         imap.remove(item);
-
+        swap(size - 1, 0);
         size -= 1;
         sink(0);
         resize();
-
         return item;
     }
 
@@ -87,6 +72,16 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     }
 
     /** UTILITIES */
+
+    private void resize() {
+        if (size == heap.length || size < heap.length / 4 && heap.length > 16) {
+            T[] newHeap = (T[]) new Object[size * 2];
+            for (int i = 0; i < size; i += 1) {
+                newHeap[i] = heap[i];
+            }
+            heap = newHeap;
+        }
+    }
 
     private int parent(int key) {
         if (key == 0) {
@@ -114,7 +109,6 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     private void swap(int j, int k) {
         imap.put(heap[j], k);
         imap.put(heap[k], j);
-
         T temp = heap[j];
         heap[j] = heap[k];
         heap[k] = temp;
@@ -129,7 +123,8 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     private void sink(int i) {
         if (right(i) < size) {
-            if (priority(left(i)) < priority(i) && priority(right(i)) < priority(i)) {
+            if (priority(left(i)) < priority(i)
+                    && priority(right(i)) < priority(i)) {
                 if (priority(left(i)) < priority(right(i))) {
                     sinkLeft(i);
                 } else {
