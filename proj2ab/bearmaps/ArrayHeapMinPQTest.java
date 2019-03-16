@@ -5,8 +5,6 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.lang.System.currentTimeMillis;
-import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 
 public class ArrayHeapMinPQTest {
