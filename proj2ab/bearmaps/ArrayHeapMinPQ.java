@@ -18,7 +18,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     }
 
     public void add(T item, double priority) {
-        if (pmap.containsKey(item)) {
+        if (contains(item)) {
             throw new IllegalArgumentException();
         }
         resize();
@@ -30,9 +30,6 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     }
 
     public boolean contains(T item) {
-        if (size == 0) {
-            throw new NoSuchElementException();
-        }
         return pmap.containsKey(item);
     }
 
@@ -63,7 +60,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     }
 
     public void changePriority(T item, double priority) {
-        if (!pmap.containsKey(item)) {
+        if (!contains(item)) {
             throw new NoSuchElementException();
         }
         pmap.put(item, priority);
@@ -76,9 +73,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     private void resize() {
         if (size == heap.length || size < heap.length / 4 && heap.length > 16) {
             T[] newHeap = (T[]) new Object[size * 2];
-            for (int i = 0; i < size; i += 1) {
-                newHeap[i] = heap[i];
-            }
+            System.arraycopy(heap, 0, newHeap, 0, size);
             heap = newHeap;
         }
     }

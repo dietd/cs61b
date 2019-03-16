@@ -5,6 +5,8 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.lang.System.currentTimeMillis;
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 
 public class ArrayHeapMinPQTest {
@@ -70,6 +72,31 @@ public class ArrayHeapMinPQTest {
     }
 
     @Test
+    public void testChangePriority2() {
+        NaiveMinPQ<String> nm = new NaiveMinPQ<>();
+        ArrayHeapMinPQ<String> ahm = new ArrayHeapMinPQ<>();
+        int iterations = 10000;
+
+        for (int i = 0; i < iterations; i += 1) {
+            double initp = Math.random() * 1000;
+            nm.add(Integer.toString(i), initp);
+            ahm.add(Integer.toString(i), initp);
+            assertEquals(nm.getSmallest(), ahm.getSmallest());
+        }
+
+        for (int j = 0; j < iterations; j += 1) {
+            double finalp = Math.random() * 1000;
+            nm.changePriority(Integer.toString(j), finalp);
+            ahm.changePriority(Integer.toString(j), finalp);
+            assertEquals(nm.getSmallest(), ahm.getSmallest());
+        }
+
+        for (int j = 0; j < iterations; j += 1) {
+            assertEquals(nm.removeSmallest(), ahm.removeSmallest());
+        }
+    }
+
+    @Test
     public void randomTest() {
         NaiveMinPQ<String> nm = new NaiveMinPQ<>();
         ArrayHeapMinPQ<String> ahm = new ArrayHeapMinPQ<>();
@@ -91,4 +118,29 @@ public class ArrayHeapMinPQTest {
             }
         }
     }
+
+    /** private String randString(int length) {
+
+        String c = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+            "abcdefghijklmnopqrstuvwxyz0123456789";
+        String s = "";
+        for (int i = 0; i < length; i += 1) {
+            s = s + c.charAt((int) Math.floor(Math.random() * c.length()));
+        }
+        return s;
+    }
+
+    private String[] randStringArray(int arrayLength, int strLength) {
+        String[] sa = new String[arrayLength];
+        Set<String> strSet = new HashSet<>();
+        for (int i = 0; i < arrayLength; i += 1) {
+            String s = randString(strLength);
+            while (strSet.contains(s)) {
+                s = randString(strLength);
+            }
+            strSet.add(s);
+            sa[i] = s;
+        }
+        return sa;
+    } */
 }
