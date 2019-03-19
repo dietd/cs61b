@@ -102,7 +102,7 @@ public class ArrayHeapMinPQTest {
         for (int i = 0; i < iterations; i += 1) {
             int act = (int) Math.floor(Math.random() * 2);
             double p = Math.random() * 1000;
-            String item = Integer.toString((int) Math.floor(Math.random() * 100));
+            String item = Integer.toString((int) Math.floor(Math.random() * 200));
             if (act == 0 && !nm.contains(item)) {
                 nm.add(item, p);
                 ahm.add(item, p);
