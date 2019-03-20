@@ -11,7 +11,7 @@ public class KDTreeTest {
 
     @Test
     public void randomTest() {
-        int points = 100000;
+        int points = 10000;
         List<Point> alp = new ArrayList<>();
 
         for (int i = 0; i < points; i += 1) {

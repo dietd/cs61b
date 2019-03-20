@@ -9,17 +9,17 @@ public class KDTree implements PointSet {
     private Comparator<Point> compX = (i, j) -> Double.compare(i.getX(), j.getX());
     private Comparator<Point> compY = (i, j) -> Double.compare(i.getY(), j.getY());
 
-    private class Node implements Comparable<Point>{
+    private class Node implements Comparable<Point> {
         private Point point;
         private Node left, right;
         private int depth;
 
-        public Node(Point point, int depth) {
+        Node(Point point, int depth) {
             this.point = point;
             this.depth = depth;
         }
 
-        public double distance(Point p) {
+        double distance(Point p) {
             return Math.pow(Point.distance(this.point, p), .5);
         }
 
@@ -30,7 +30,7 @@ public class KDTree implements PointSet {
             return compY.compare(this.point, p);
         }
 
-        public double bestBad(Point p) {
+        double bestBad(Point p) {
             if (depth % 2 == 0) {
                 return Math.abs(this.point.getX() - p.getX());
             }
