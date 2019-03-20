@@ -46,6 +46,9 @@ public class TestMyTrieSet {
         }
 
         List<String> keys = t.keysWithPrefix("sa");
+        for (String s : keys) {
+            System.out.println(s);
+        }
         for (String s: saStrings) {
             assertTrue(keys.contains(s));
         }
@@ -57,7 +60,4 @@ public class TestMyTrieSet {
     public static void main(String[] args) {
         jh61b.junit.TestRunner.runTests(TestMyTrieSet.class);
     }
-
-
-
 }
