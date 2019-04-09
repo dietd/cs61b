@@ -1,9 +1,15 @@
 package bearmaps.hw4;
 
-import bearmaps.ArrayHeapMinPQ;
+import bearmaps.proj2ab.ArrayHeapMinPQ;
 import edu.princeton.cs.algs4.Stopwatch;
 
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.ArrayList;
+
 
 public class AStarSolver<Vertex> implements ShortestPathsSolver {
 

@@ -1,6 +1,4 @@
-package bearmaps;
-
-import bearmaps.proj2ab.ExtrinsicMinPQ;
+package bearmaps.proj2ab;
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;

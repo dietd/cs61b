@@ -1,7 +1,7 @@
 package bearmaps.hw4.integerhoppuzzle;
 
 import bearmaps.hw4.AStarSolver;
-import bearmaps.hw4.LazySolver;
+//import bearmaps.hw4.LazySolver;
 import bearmaps.hw4.ShortestPathsSolver;
 import bearmaps.hw4.SolutionPrinter;
 
