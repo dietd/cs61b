@@ -66,7 +66,7 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver {
                     double actual = distTo.get(prev) + weight;
                     double alt = actual + input.estimatedDistanceToGoal(next, end);
 
-                    if (alt < distTo.get(next)) {
+                    if (actual < distTo.get(next)) {
                         if (pq.contains(next)) {
                             pq.changePriority(next, alt);
                         } else {
