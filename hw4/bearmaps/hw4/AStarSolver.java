@@ -73,7 +73,7 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver {
                             pq.add(next, alt);
                         }
                         distTo.put(next, actual);
-                        prevVertex.put(next, prev);
+                        prevVertex.put(next, current);
                     }
                 }
             }
