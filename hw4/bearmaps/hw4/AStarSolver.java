@@ -84,7 +84,7 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver {
         if (solverOutcome == SolverOutcome.SOLVED) {
             Vertex v = end;
             solution.add(v);
-            while (v != start) {
+            while (!v.equals(start)) {
                 v = prevVertex.get(v);
                 solution.add(v);
             }
