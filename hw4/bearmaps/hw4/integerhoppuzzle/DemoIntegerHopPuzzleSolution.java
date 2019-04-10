@@ -19,6 +19,5 @@ public class DemoIntegerHopPuzzleSolution {
 
         ShortestPathsSolver<Integer> solver = new AStarSolver<>(ahg, start, goal, 10);
         SolutionPrinter.summarizeSolution(solver, " => ");
-
     }
 }

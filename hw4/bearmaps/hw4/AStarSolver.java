@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class AStarSolver<Vertex> implements ShortestPathsSolver {
@@ -36,12 +37,12 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver {
 
         while (pq.size() != 0) {
 
+            Vertex current = pq.removeSmallest();
+
             if (sw.elapsedTime() > timeout) {
                 solverOutcome = SolverOutcome.TIMEOUT;
                 break;
             }
-
-            Vertex current = pq.removeSmallest();
 
             if (current.equals(end)) {
                 solverOutcome = SolverOutcome.SOLVED;
@@ -73,7 +74,7 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver {
                             pq.add(next, alt);
                         }
                         distTo.put(next, actual);
-                        prevVertex.put(next, current);
+                        prevVertex.put(next, prev);
                     }
                 }
             }
@@ -83,13 +84,14 @@ public class AStarSolver<Vertex> implements ShortestPathsSolver {
 
         if (solverOutcome == SolverOutcome.SOLVED) {
             Vertex v = end;
-            solution.add(0, v);
+            solution.add(v);
             while (v != start) {
                 v = prevVertex.get(v);
-                solution.add(0, v);
+                solution.add(v);
             }
             solutionWeight = distTo.get(end);
         }
+        Collections.reverse(solution);
 
         explorationTime = sw.elapsedTime();
     }
