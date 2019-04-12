@@ -78,15 +78,18 @@ public class QuickSort {
      */
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
-        if (items.isEmpty()) {
+
+        if (items.size() <= 1) {
             return items;
         }
+
         Queue<Item> left = new Queue<>();
         Queue<Item> right = new Queue<>();
         Queue<Item> mid = new Queue<>();
+
         partition(items, getRandomItem(items), left, mid, right);
-        quickSort(left);
-        quickSort(right);
+        left = quickSort(left);
+        right = quickSort(right);
         Queue<Item> lm = catenate(left, mid);
         Queue<Item> lmr = catenate(lm, right);
         items = lmr;
