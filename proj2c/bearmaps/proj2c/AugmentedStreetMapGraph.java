@@ -16,8 +16,10 @@ import java.util.*;
  */
 public class AugmentedStreetMapGraph extends StreetMapGraph {
 
-    private Map<Point, Long> nmap;
+    private Map<Point, Node> nmap;
     private KDTree kdTree;
+    private TrieSet names;
+    private Map<String, ArrayList<Node>> qmap;
 
     public AugmentedStreetMapGraph(String dbPath) {
         super(dbPath);
@@ -26,12 +28,25 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         List<Point> points = new ArrayList<>();
 
         nmap = new HashMap<>();
+        qmap = new HashMap<>();
+        names = new TrieSet();
 
         for (Node n : nodes) {
             if (!this.neighbors(n.id()).isEmpty()) {
                 Point p = new Point(n.lon(), n.lat());
                 points.add(p);
-                nmap.put(p, n.id());
+                String cleanName = n.name();
+                names.add(cleanName);
+
+                if (qmap.containsKey(cleanName)) {
+                    qmap.get(cleanName).add(n);
+                } else {
+                    ArrayList<Node> al = new ArrayList<>();
+                    al.add(n);
+                    qmap.put(cleanName, al);
+                }
+
+                nmap.put(p, n);
             }
         }
 
@@ -47,9 +62,8 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      * @return The id of the node in the graph closest to the target.
      */
     public long closest(double lon, double lat) {
-        return nmap.get(kdTree.nearest(lon, lat));
+        return nmap.get(kdTree.nearest(lon, lat)).id();
     }
-
 
     /**
      * For Project Part III (gold points)
@@ -60,7 +74,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      * cleaned <code>prefix</code>.
      */
     public List<String> getLocationsByPrefix(String prefix) {
-        return new LinkedList<>();
+        return names.keysWithPrefix(prefix);
     }
 
     /**
@@ -77,9 +91,17 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      * "id" -> Number, The id of the node. <br>
      */
     public List<Map<String, Object>> getLocations(String locationName) {
-        return new LinkedList<>();
+        List<Map<String, Object>> locations = new ArrayList<>();
+        for (Node n : qmap.get(locationName)) {
+            Map<String, Object> m = new HashMap<>();
+            m.put("lon", n.lon());
+            m.put("lat", n.lat());
+            m.put("name", n.name());
+            m.put("id", n.id());
+            locations.add(m);
+        }
+        return locations;
     }
-
 
     /**
      * Useful for Part III. Do not modify.
