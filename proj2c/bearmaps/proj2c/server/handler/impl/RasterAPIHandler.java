@@ -1,6 +1,7 @@
 package bearmaps.proj2c.server.handler.impl;
 
 import bearmaps.proj2c.AugmentedStreetMapGraph;
+import bearmaps.proj2c.QuadTree;
 import bearmaps.proj2c.server.handler.APIRouteHandler;
 import spark.Request;
 import spark.Response;
@@ -26,6 +27,8 @@ import static bearmaps.proj2c.utils.Constants.ROUTE_LIST;
  * @author rahul, Josh Hug, _________
  */
 public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<String, Object>> {
+
+    private QuadTree q = new QuadTree();
 
     /**
      * Each raster request to the server will have the following parameters
@@ -84,12 +87,14 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      */
     @Override
     public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response) {
-        //System.out.println("yo, wanna know the parameters given by the web browser? They are:");
-        //System.out.println(requestParams);
-        Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
-                + "your browser.");
-        return results;
+        double lrlon = requestParams.get("lrlon");
+        double ullon = requestParams.get("ullon");
+        double width = requestParams.get("w");
+        double ullat = requestParams.get("ullat");
+        double lrlat = requestParams.get("lrlat");
+        double londpp = (lrlon - ullon) / width;
+
+        return q.getRasterMap(ullon, ullat, lrlon, lrlat, londpp);
     }
 
     @Override
