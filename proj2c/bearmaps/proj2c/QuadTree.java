@@ -53,6 +53,9 @@ public class QuadTree {
         Node ultile = getNode(ulpoint, lonDpp);
         Node lrtile = getNode(lrpoint, lonDpp);
 
+        //System.out.println(ultile.x + ", " + ultile.y);
+        //System.out.println(lrtile.x + ", " + lrtile.y);
+
         rasterMap.put("render_grid", getGrid(ultile, lrtile));
         rasterMap.put("raster_ul_lon", ultile.ulpoint.getX());
         rasterMap.put("raster_ul_lat", ultile.ulpoint.getY());
@@ -71,7 +74,7 @@ public class QuadTree {
 
     private Node getNode(Point p, double dpp, Node n) {
 
-        if (n.depth >= 7 || checkDpp(n, dpp)) {
+        if (checkDpp(n, dpp)) {
             return n;
         }
 
@@ -97,6 +100,7 @@ public class QuadTree {
         if (next == null) {
             return n;
         }
+
         return getNode(p, dpp, next);
     }
 
@@ -113,7 +117,7 @@ public class QuadTree {
             n = newNode;
         }
 
-        if (newNode.depth > 7 || checkDpp(n, dpp)) {
+        if (newNode.depth >= 7 || checkDpp(n, dpp)) {
             return n;
         }
 
@@ -178,29 +182,29 @@ public class QuadTree {
 
     private static boolean checkDpp(Node n, double dpp) {
         double currdpp = (n.lrpoint.getX() - n.ulpoint.getX()) / Constants.TILE_SIZE;
-        if (currdpp <= dpp) {
+        if (currdpp < dpp) {
             return true;
         }
         return false;
     }
 
     private static boolean checkPoints(Point ul, Point lr) {
+
         if (lr.getX() <= ul.getX() || lr.getY() >= ul.getY()) {
             return false;
         }
-        return checkBetween(ul) || checkBetween(lr);
+
+        return checkOverlap(ul, lr);
     }
 
-    private static boolean checkBetween(Point a) {
-
-        if (a.getX() <= Constants.ROOT_LRLON
-                && a.getX() >= Constants.ROOT_ULLON) {
-            if (a.getY() <= Constants.ROOT_ULLAT
-                && a.getY() >= Constants.ROOT_LRLAT) {
-                return true;
-            }
+    private static boolean checkOverlap(Point ul, Point lr) {
+        if (lr.getY() > Constants.ROOT_ULLAT ||
+        ul.getY() < Constants.ROOT_LRLAT ||
+        lr.getX() < Constants.ROOT_ULLON ||
+        ul.getX() > Constants.ROOT_LRLON) {
+            return false;
         }
-        return false;
+        return true;
     }
 
     private static String[][] getGrid(Node ultile, Node lrtile) {

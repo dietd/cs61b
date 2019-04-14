@@ -29,7 +29,6 @@ import static bearmaps.proj2c.utils.Constants.ROUTE_LIST;
 public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<String, Object>> {
 
     private QuadTree q = new QuadTree();
-
     /**
      * Each raster request to the server will have the following parameters
      * as keys in the params map accessible by,
@@ -94,7 +93,11 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         double lrlat = requestParams.get("lrlat");
         double londpp = (lrlon - ullon) / width;
 
-        return q.getRasterMap(ullon, ullat, lrlon, lrlat, londpp);
+        Map<String, Object> result = q.getRasterMap(ullon, ullat, lrlon, lrlat, londpp);
+        if (result.get("query_success").equals(false)) {
+            return queryFail();
+        }
+        return result;
     }
 
     @Override
@@ -148,7 +151,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      * In Spring 2016, students had to do this on their own, but in 2017,
      * we made this into provided code since it was just a bit too low level.
      */
-    private  void writeImagesToOutputStream(Map<String, Object> rasteredImageParams,
+    private void writeImagesToOutputStream(Map<String, Object> rasteredImageParams,
                                                   ByteArrayOutputStream os) {
         String[][] renderGrid = (String[][]) rasteredImageParams.get("render_grid");
         int numVertTiles = renderGrid.length;

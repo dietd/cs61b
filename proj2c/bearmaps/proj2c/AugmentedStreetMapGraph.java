@@ -22,6 +22,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
     private Map<String, ArrayList<Node>> qmap;
 
     public AugmentedStreetMapGraph(String dbPath) {
+
         super(dbPath);
 
         List<Node> nodes = this.getNodes();
@@ -32,22 +33,27 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         names = new TrieSet();
 
         for (Node n : nodes) {
-            if (!this.neighbors(n.id()).isEmpty()) {
-                Point p = new Point(n.lon(), n.lat());
-                points.add(p);
-                String cleanName = n.name();
-                names.add(cleanName);
 
-                if (qmap.containsKey(cleanName)) {
-                    qmap.get(cleanName).add(n);
+            if (n.name() != null) {
+
+                String clean = cleanString(n.name());
+                names.add(clean);
+
+                if (qmap.containsKey(clean)) {
+                    qmap.get(clean).add(n);
                 } else {
                     ArrayList<Node> al = new ArrayList<>();
                     al.add(n);
-                    qmap.put(cleanName, al);
+                    qmap.put(clean, al);
                 }
+            }
 
+            if (!neighbors(n.id()).isEmpty()) {
+                Point p = new Point(n.lon(), n.lat());
+                points.add(p);
                 nmap.put(p, n);
             }
+
         }
 
         kdTree = new KDTree(points);
@@ -74,7 +80,14 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      * cleaned <code>prefix</code>.
      */
     public List<String> getLocationsByPrefix(String prefix) {
-        return names.keysWithPrefix(prefix);
+        prefix = cleanString(prefix);
+        List<String> result = new ArrayList<>();
+        for (String s : names.keysWithPrefix(prefix)) {
+            for (Node n : qmap.get(s)) {
+                result.add(n.name());
+            }
+        }
+        return result;
     }
 
     /**
@@ -91,6 +104,7 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
      * "id" -> Number, The id of the node. <br>
      */
     public List<Map<String, Object>> getLocations(String locationName) {
+        locationName = cleanString(locationName);
         List<Map<String, Object>> locations = new ArrayList<>();
         for (Node n : qmap.get(locationName)) {
             Map<String, Object> m = new HashMap<>();
@@ -112,5 +126,4 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
     private static String cleanString(String s) {
         return s.replaceAll("[^a-zA-Z ]", "").toLowerCase();
     }
-
 }
