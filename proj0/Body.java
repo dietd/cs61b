@@ -1,9 +1,9 @@
-public class Body{
+public class Planet{
   public double xxPos, yyPos, xxVel, yyVel, mass;
   public String imgFileName;
 
   /** Planet constructors */
-  public Body(double xP, double yP, double xV, double yV, double m, String img){
+  public Planet(double xP, double yP, double xV, double yV, double m, String img){
     xxPos = xP;
     yyPos = yP;
     xxVel = xV;
@@ -12,7 +12,7 @@ public class Body{
     imgFileName = img;
   }
 
-  public Body(Body p){
+  public Planet(Planet p){
     xxPos = p.xxPos;
     yyPos = p.yyPos;
     xxVel = p.xxVel;
@@ -21,33 +21,33 @@ public class Body{
     imgFileName = p.imgFileName;
   }
 
-  public double calcDistance(Body p){
+  public double calcDistance(Planet p){
     double dxs = (xxPos - p.xxPos) * (xxPos - p.xxPos);
     double dys = (yyPos - p.yyPos) * (yyPos - p.yyPos);
     return Math.pow(dxs + dys, .5);
   }
 
-  public double calcForceExertedBy(Body p){
+  public double calcForceExertedBy(Planet p){
     double g = 6.67e-11;
     double rs = calcDistance(p) * calcDistance(p);
     return (g * mass * p.mass)/rs;
   }
 
-  public double calcForceExertedByX(Body p){
+  public double calcForceExertedByX(Planet p){
     double tforce = calcForceExertedBy(p);
     double distance = p.xxPos - xxPos;
     double radius = calcDistance(p);
     return (tforce * distance) / radius;
   }
 
-  public double calcForceExertedByY(Body p){
+  public double calcForceExertedByY(Planet p){
     double tforce = calcForceExertedBy(p);
     double distance = p.yyPos - yyPos;
     double radius = calcDistance(p);
     return (tforce * distance) / radius;
   }
 
-  public double calcNetForceExertedByX(Body[] p){
+  public double calcNetForceExertedByX(Planet[] p){
     double xforce = 0;
     for(int i = 0; i < p.length; i++){
       if(this.equals(p[i])){
@@ -59,7 +59,7 @@ public class Body{
     return xforce;
   }
 
-  public double calcNetForceExertedByY(Body[] p){
+  public double calcNetForceExertedByY(Planet[] p){
     double yforce = 0;
     for(int i = 0; i < p.length; i++){
       if(this.equals(p[i])){

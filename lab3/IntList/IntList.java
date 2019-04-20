@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.Formatter;
+import java.util.List;
 
 /**
  * A naked recursive list of integers, similar to what we saw in lecture 3, but
@@ -209,7 +211,6 @@ public class IntList {
         }
 
         int cnt = 0;
-
 
         while (true) {
             cnt++;
