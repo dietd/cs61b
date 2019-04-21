@@ -9,12 +9,15 @@ import java.util.Random;
 
 public class Room {
     private Tile ll;
+    private Tile ur;
     private int width;
     private int height;
     private Hallway hallway;
 
     public Room(Tile ll, int width, int height) {
         this.ll = ll;
+        this.ur = new Tile(ll.getX() + width - 1,
+                ll.getY() + height - 1);
         this.width = width;
         this.height = height;
     }
@@ -24,7 +27,7 @@ public class Room {
     }
 
     public Tile ur() {
-        return new Tile(ll.getX() + width - 1, ll.getY() + height - 1);
+        return ur;
     }
 
     public int size() {
@@ -32,50 +35,33 @@ public class Room {
     }
 
     public boolean overlap(Room r) {
-        if (r.ur().getX() < ll.getX() ||
-            r.ur().getY() < ll.getY() ||
-            ur().getX() < r.ll.getX() ||
-            ur().getY() < r.ll.getY()
-        ) {
-            return false;
-        }
-        return true;
+        return !(r.ur.getX() < ll.getX() ||
+                r.ur.getY() < ll.getY() ||
+                ur.getX() < r.ll.getX() ||
+                ur.getY() < r.ll.getY()
+        );
     }
 
     public boolean insideWorld() {
-        Room world = new Room(new Tile(0, 0), 80, 40);
-        if (overlap(world)) {
-            return true;
-        }
-        return false;
+        return (ll.getX() >= 0 &&
+                ur.getX() < Constants.WIDTH &&
+                ll.getY() >= 0 &&
+                ur.getY() < Constants.HEIGHT
+        );
     }
 
     public void putTiles(TETile[][] world) {
 
-        for (int i = ll.getX(); i<= ur().getX(); i++) {
-            for(int j = ll.getY(); j <= ur().getY(); j++) {
+        for (int i = ll.getX(); i <= ur.getX(); i++) {
+            for (int j = ll.getY(); j <= ur.getY(); j++) {
                 world[i][j] = Tileset.WALL;
             }
         }
 
-        for (int i = ll.getX() + 1 ; i <= ur().getX() - 1; i += 1) {
-            for (int j = ll.getY() + 1; j <= ur().getY() - 1; j += 1) {
+        for (int i = ll.getX() + 1; i <= ur.getX() - 1; i += 1) {
+            for (int j = ll.getY() + 1; j <= ur.getY() - 1; j += 1) {
                 world[i][j] = Tileset.FLOOR;
             }
         }
-
-
-
-
-        //Room inside = new Room(new Tile(ll.getX() + 1, ll.getY() + 1),
-                //width - 1, height - 1);
-
-        //inside.putTiles(world, Tileset.FLOOR);
-    }
-
-    public void putTiles(TETile[][] world, Random rng) {
-        int x = rng.nextInt(width) - 1;
-        int y = rng.nextInt(height) - 1;
-        world[x][y] = Tileset.FLOWER;
     }
 }

@@ -8,30 +8,21 @@ import java.util.Random;
 
 public class World {
 
-    private static final int WIDTH = 80;
-    private static final int HEIGHT = 40;
-
     public static void main(String[] args) {
 
-        Random rng = new Random(123);
+        Random rng = new Random(1998);
 
         TERenderer tr = new TERenderer();
-        tr.initialize(WIDTH, HEIGHT);
-        TETile[][] world = new TETile[WIDTH][HEIGHT];
+        tr.initialize(Constants.WIDTH, Constants.HEIGHT);
+        TETile[][] world = new TETile[Constants.WIDTH][Constants.HEIGHT];
 
-        for (int i = 0; i < WIDTH; i += 1) {
-            for (int j = 0; j < HEIGHT; j += 1) {
+        for (int i = 0; i < Constants.WIDTH; i += 1) {
+            for (int j = 0; j < Constants.HEIGHT; j += 1) {
                 world[i][j] = Tileset.NOTHING;
             }
         }
 
-        RoomFactory rf = new RoomFactory(rng, WIDTH, HEIGHT);
-
-        while (rf.percentCovered() < 0.5) {
-            rf.genRoom().putTiles(world);
-        }
-
-        System.out.println("Percent: " + rf.percentCovered());
+        RoomFactory rf = new RoomFactory(world, rng);
 
         tr.renderFrame(world);
     }
