@@ -1,5 +1,6 @@
 package byow.Core;
 
+import byow.InputDemo.StringInputDevice;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 
@@ -14,6 +15,7 @@ public class Engine {
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
+
     }
 
     /**
@@ -37,6 +39,7 @@ public class Engine {
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
+
     public TETile[][] interactWithInputString(String input) {
         // TODO: Fill out this method so that it run the engine using the input
         // passed in as an argument, and return a 2D tile representation of the
@@ -45,6 +48,36 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+
+        StringInputDevice sd = new StringInputDevice(input);
+
+        int num = 0;
+
+
+
+        while (sd.possibleNextInput()) {
+
+            char s = sd.getNextKey();
+
+            if (s == 'n') {
+                s = sd.getNextKey();
+                while (s != 's') {
+                    System.out.println(s);
+                    num = num * 10 + Character.getNumericValue(s);
+                    s = sd.getNextKey();
+                }
+            }
+
+            if (s == ':') {
+                s = sd.getNextKey();
+                if (s =='q') {
+                    break;
+                }
+            }
+        }
+
+
+        System.out.println(num);
 
         TETile[][] finalWorldFrame = null;
         return finalWorldFrame;

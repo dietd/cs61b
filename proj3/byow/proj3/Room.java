@@ -3,8 +3,6 @@ package byow.proj3;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class Room {
@@ -12,14 +10,29 @@ public class Room {
     private Tile ur;
     private int width;
     private int height;
-    private Hallway hallway;
+    private int index;
 
-    public Room(Tile ll, int width, int height) {
+    public Room(Tile ll, int width, int height, int index) {
         this.ll = ll;
         this.ur = new Tile(ll.getX() + width - 1,
                 ll.getY() + height - 1);
         this.width = width;
         this.height = height;
+        this.index = index;
+    }
+
+    public Tile getRandomInside(Random rng) {
+
+        int x = rng.nextInt(ur.getX()
+                - ll.getX() - 2) + ll.getX() + 1;
+        int y = rng.nextInt(ur.getY()
+                - ll.getY() - 2) + ll.getY() + 1;
+
+        return new Tile(x, y);
+    }
+
+    public int index() {
+        return index;
     }
 
     public Tile ll() {
@@ -39,6 +52,14 @@ public class Room {
                 r.ur.getY() < ll.getY() ||
                 ur.getX() < r.ll.getX() ||
                 ur.getY() < r.ll.getY()
+        );
+    }
+
+    public boolean overlap(Hallway h) {
+        return !(h.ur().getX() < ll.getX() ||
+                h.ur().getY() < ll.getY() ||
+                ur.getX() < h.ll().getX() ||
+                ur.getY() < h.ll().getY()
         );
     }
 

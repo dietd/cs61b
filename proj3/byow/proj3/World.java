@@ -10,7 +10,7 @@ public class World {
 
     public static void main(String[] args) {
 
-        Random rng = new Random(1998);
+        Random rng = new Random(190);
 
         TERenderer tr = new TERenderer();
         tr.initialize(Constants.WIDTH, Constants.HEIGHT);
@@ -23,6 +23,14 @@ public class World {
         }
 
         RoomFactory rf = new RoomFactory(world, rng);
+
+        //Hallway h1 = new Hallway(new Tile(0, 0), Hallway.hallStates.LR, 5);
+        //Hallway h2 = new Hallway(new Tile(5, 0), Hallway.hallStates.UD, 5);
+
+        //System.out.println(h1.connected(h2));
+
+        //h1.putTiles(world);
+       // h2.putTiles(world);
 
         tr.renderFrame(world);
     }

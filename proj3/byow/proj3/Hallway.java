@@ -3,6 +3,11 @@ package byow.proj3;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class Hallway {
 
     protected enum hallStates {
@@ -12,6 +17,7 @@ public class Hallway {
     private Tile ll, ur;
     private hallStates orient;
     private int dim;
+    protected List<Room> rooms = new ArrayList<>();
 
     public Hallway(Tile ll, hallStates h, int dim) {
         this.dim = dim;
@@ -24,27 +30,47 @@ public class Hallway {
         }
     }
 
-    public int size() {
-        return 3 * (dim + 1);
+    public Tile ll() {
+        return ll;
     }
 
-    public boolean overlap(Room r) {
-        return !(r.ur().getX() - 1 < ll.getX() + 1 ||
+    public Tile ur() {
+        return ur;
+    }
+
+    public boolean connected(Room r) {
+        return !(r.ur().getX() - 1 < ll.getX() ||
                 r.ur().getY() - 1 < ll.getY() + 1 ||
-                ur.getX() - 1 < r.ll().getX() + 1 ||
+                ur.getX() < r.ll().getX() + 1 ||
                 ur.getY() - 1 < r.ll().getY() + 1
         );
     }
 
     public boolean overlap(Hallway h) {
-        if (orient != h.orient) {
-            return false;
-        }
         return !(h.ur.getX() < ll.getX() ||
                 h.ur.getY() < ll.getY() ||
                 ur.getX() < h.ll.getX() ||
-                ur.getY() < h.ll.getY()
-        );
+                ur.getY() < h.ll.getY());
+    }
+
+    public boolean overlap(Room r) {
+        return !(r.ur().getX() < ll.getX() ||
+                r.ur().getY() < ll.getY() ||
+                ur.getX() < r.ll().getX() ||
+                ur.getY() < r.ll().getY());
+    }
+
+    public boolean connected(Hallway h) {
+        if (orient != h.orient) {
+            if (orient.equals(hallStates.UD)) {
+                return !(h.ur.getX() < ll.getX() + 1 ||
+                        h.ur.getY() < ll.getY() + 1 ||
+                        ur.getX() - 1 < h.ll.getX() ||
+                        ur.getY() - 1 < h.ll.getY());
+            }
+            return h.connected(this);
+        }
+        return false;
     }
 
     public boolean insideWorld() {
@@ -52,6 +78,14 @@ public class Hallway {
                 ur.getX() < Constants.WIDTH &&
                 ll.getY() >= 0 &&
                 ur.getY() < Constants.HEIGHT
+        );
+    }
+
+    public boolean insideRoom(Room r) {
+        return (ll.getX() >= r.ll().getX() &&
+                ur.getX() <= r.ur().getX() &&
+                ll.getY() >= r.ll().getY() &&
+                ur.getY() <= r.ur().getY()
         );
     }
 
@@ -69,6 +103,34 @@ public class Hallway {
                 world[i][j] = Tileset.FLOOR;
             }
         }
-
     }
+
+    public String toString() {
+        return ll.toString() + ", " + ur.toString();
+    }
+
+    /**
+
+     public static Hallway getLine(Tile t1, Tile t2) {
+
+     if (t1.getY() == t2.getY()) {
+     if (t1.getX() < t2.getX()) {
+     return new Hallway(new Tile(t1.getX(), t1.getY() - 1),
+     hallStates.LR, t2.getX() - t1.getX() + 1);
+     }
+     return new Hallway(new Tile(t2.getX(), t2.getY() - 1),
+     hallStates.LR, t1.getX() - t2.getX() + 1);
+
+     } else if (t1.getX() == t2.getX()) {
+
+     if (t1.getY() < t2.getY()) {
+     return new Hallway(new Tile(t1.getX() - 1, t1.getY() - 1),
+     hallStates.UD, t2.getY() - t1.getY() + 1);
+     }
+     return new Hallway(new Tile(t2.getX() - 1, t2.getY() - 1),
+     hallStates.UD, t1.getY() - t2.getY() + 1);
+     }
+     return null;
+     }
+     */
 }

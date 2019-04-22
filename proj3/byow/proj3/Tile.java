@@ -16,4 +16,8 @@ public class Tile {
     public int getY() {
         return y;
     }
+
+    public String toString() {
+        return "Tile: " + x + " " + y;
+    }
 }

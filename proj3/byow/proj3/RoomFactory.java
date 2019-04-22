@@ -1,6 +1,8 @@
 package byow.proj3;
 
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 import java.util.*;
 
@@ -13,65 +15,90 @@ public class RoomFactory {
     private int hallwayArea = 0;
     private List<Room> rooms = new ArrayList<>();
     private List<Hallway> hallways = new ArrayList<>();
-    private UnionFind connectedGrid;
+    private UnionFind connections;
 
     public RoomFactory(TETile[][] world, Random rng) {
+
         this.rng = rng;
-        while (percentRoom() < 0.5) {
-            this.genRoom().putTiles(world);
+        int numRooms = rng.nextInt(40) + 1;
+        int numHalls = rng.nextInt(40);
+        connections = new UnionFind(numRooms);
+
+        while (rooms.size() < numRooms) {
+            this.genRoom();
         }
-        connectedGrid = new UnionFind(rooms.size());
-        while (percentHallway() < 0.30) {
+
+        while (hallways.size() < numHalls) {
             this.genHallway();
+        }
+
+        connections.printArray();
+
+        for (Room r : rooms) {
+            r.putTiles(world);
         }
 
         for (Hallway h : hallways) {
             h.putTiles(world);
         }
 
-        System.out.println(connectedGrid.percentUnioned());
-
-        /**
-        int biggestMaze = connectedGrid.largestUnion();
-        int smallestMaze = connectedGrid.smallestUnion();
-        Room centerRoom = rooms.get(biggestMaze);
-        Room lonelyRoom = rooms.get(smallestMaze);
-         */
-
-        //randomly generate a hallway
-        //see if room hallway connects to connects to center Room
-        //if it doesn't delete it and try again
-
-
     }
 
-
-
-    public List<Hallway> getHallways() {
-        return hallways;
+    private void clean() {
+        
     }
 
-    public List<Room> getRooms() {
-        return rooms;
+    public Room getRandomRoom() {
+        if (rooms.size() == 1) {
+            return rooms.get(0);
+        }
+        return rooms.get(rng.nextInt(rooms.size() - 1));
     }
 
-    public double percentRoom() {
-        return (double) roomArea / (double) (Constants.WIDTH * Constants.HEIGHT);
+    public Room genRoom() {
+
+        int w = rng.nextInt(Constants.maxRoomDim
+                - Constants.minRoomDim) + Constants.minRoomDim;
+
+        int h = rng.nextInt(Constants.maxRoomDim
+                - Constants.minRoomDim) + Constants.minRoomDim;
+
+        int x = Math.floorMod(rng.nextInt(), worldW);
+        int y = Math.floorMod(rng.nextInt(), worldH);
+
+        Room temp = new Room(new Tile(x, y), w, h, rooms.size());
+
+        if (temp.insideWorld() && !overlapsRoom(temp)) {
+            rooms.add(temp);
+            roomArea += temp.size();
+            return temp;
+        }
+
+        return null;
     }
 
-    public double percentHallway() {
-        return (double) hallwayArea / (double) (Constants.WIDTH * Constants.HEIGHT);
+    private boolean overlapsRoom(Room r) {
+
+        for (Room n : rooms) {
+            if (n.overlap(r)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void genHallway() {
+
         int dim = rng.nextInt(Constants.maxHallwayDim
                 - Constants.minHallwayDim) + Constants.minHallwayDim;
 
         int x = Math.floorMod(rng.nextInt(), worldW);
         int y = Math.floorMod(rng.nextInt(), worldH);
 
-        int o = rng.nextInt(2);
+        int o = Math.floorMod(rng.nextInt(), 2);
         Hallway.hallStates orientation;
+
         if (o == 0) {
             orientation = Hallway.hallStates.LR;
         } else {
@@ -79,71 +106,94 @@ public class RoomFactory {
         }
 
         Hallway h = new Hallway(new Tile(x, y), orientation, dim);
-        if (!h.insideWorld() || overlapsH(h) || !overlapsTwoRooms(h)) {
-            return;
-        }
-        hallwayArea += h.size();
-        hallways.add(h);
-    }
 
-    public Room genRoom() {
+        List<Room> rlist = connectedRooms(h);
+        List<Hallway> hlist = connectedHalls(h);
 
-        int w = rng.nextInt(Constants.maxRoomDim
-                - Constants.minRoomWidth) + Constants.minRoomWidth;
-
-        int h = rng.nextInt(Constants.maxRoomDim
-                - Constants.minRoomWidth) + Constants.minRoomWidth;
-
-        int x = Math.floorMod(rng.nextInt(), worldW);
-        int y = Math.floorMod(rng.nextInt(), worldH);
-
-        Room temp = new Room(new Tile(x, y), w, h);
-
-        if (temp.insideWorld() && !overlapsOne(temp)) {
-            rooms.add(temp);
-            roomArea += temp.size();
-            return temp;
-        } else {
-            return genRoom();
+        if (h.insideWorld() && ((hlist.size() + rlist.size()) > 1) &&
+            !overlapsRoom(h) && !overlapsHall(h)) {
+            hallways.add(h);
+            connectAll(rlist);
         }
     }
 
-    private boolean overlapsOne(Room r) {
+    private void connectAll(List<Room> rlist) {
+        if (rlist.isEmpty()) {
+           return;
+        }
+        int inital = rlist.get(0).index();
+        for (Room r : rlist) {
+            connections.union(inital, r.index());
+        }
+    }
+
+    private List<Hallway> connectedHalls(Hallway h1) {
+        List<Hallway> t = new ArrayList<>();
+        for (Hallway h2 : hallways) {
+            if (h1.connected(h2)) {
+                t.add(h2);
+            }
+        }
+        return t;
+    }
+
+    private List<Room> connectedRooms(Hallway h) {
+        List<Room> t = new ArrayList<>();
         for (Room n : rooms) {
-            if (n.overlap(r)) {
+            if (h.connected(n)) {
+                t.add(n);
+            }
+        }
+        return t;
+    }
+
+    private boolean overlapsRoom(Hallway h) {
+        for (Room r : rooms) {
+            if ((h.overlap(r) && !h.connected(r)) || h.insideRoom(r)) {
                 return true;
             }
         }
         return false;
     }
 
-    private boolean overlapsTwoRooms(Hallway h) {
-        int counter = 0;
-        List<Room> connectedRooms = new ArrayList<>();
-        for (Room n : rooms) {
-            if (h.overlap(n)) {
-                counter += 1;
-                connectedRooms.add(n);
-
-            }
-        }
-        if (counter >= 2) {
-            Room r1 = connectedRooms.get(0);
-            for (int i = 1; i < connectedRooms.size(); i++) {
-                connectedGrid.union(rooms.indexOf(r1),
-                        rooms.indexOf(connectedRooms.get(i)));
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean overlapsH(Hallway h) {
-        for (Hallway n : hallways) {
-            if (h.overlap(n)) {
+    private boolean overlapsHall(Hallway h1) {
+        for (Hallway h2 : hallways) {
+            if (h1.overlap(h2) && !h1.connected(h2)) {
                 return true;
             }
         }
         return false;
     }
+
+    /**
+     public boolean connectRooms(Room r1, Room r2, int num) {
+     Tile tile1 = r1.getRandomInside(rng);
+     Tile tile2 = r2.getRandomInside(rng);
+
+     System.out.println(tile1 + " " + tile2);
+
+     Tile midTile;
+     if (num == 0) {
+     midTile = new Tile(tile2.getX(), tile1.getY());
+     } else {
+     midTile = new Tile(tile1.getX(), tile2.getY());
+     }
+
+     Hallway h1 = Hallway.getLine(tile1, midTile);
+     Hallway h2 = Hallway.getLine(tile2, midTile);
+
+     if (validateHallway(h1) && validateHallway(h2)) {
+     hallways.add(h1);
+     hallways.add(h2);
+     return true;
+     }
+
+     return false;
+     }
+
+     private boolean validateHallway(Hallway h) {
+     return h.insideWorld();
+     }
+
+     */
 }
