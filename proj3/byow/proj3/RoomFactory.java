@@ -22,8 +22,8 @@ public class RoomFactory {
 
         this.rng = rng;
 
-        this.numRooms = 40;
-        this.numHallways = rng.nextInt(50 - numRooms) + numRooms;
+        this.numRooms = 30;
+        this.numHallways = rng.nextInt(20) + 10;
 
         connections = new UnionFind(numRooms + numHallways);
 
