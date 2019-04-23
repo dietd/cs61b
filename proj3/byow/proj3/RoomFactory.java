@@ -22,7 +22,7 @@ public class RoomFactory {
 
         this.rng = rng;
 
-        this.numRooms = rng.nextInt(20) + 30;
+        this.numRooms = 40;
         this.numHallways = rng.nextInt(50 - numRooms) + numRooms;
 
         connections = new UnionFind(numRooms + numHallways);
@@ -130,7 +130,7 @@ public class RoomFactory {
         List<Room> rlist = connectedRooms(h);
         List<Hallway> hlist = connectedHalls(h);
 
-        if (h.insideWorld() && ((hlist.size() + rlist.size()) > 1)
+        if (h.insideWorld() && ((hlist.size() + rlist.size()) >= 1)
                 && !overlapsRoom(h) && !overlapsHall(h)) {
 
             hallways.add(h);

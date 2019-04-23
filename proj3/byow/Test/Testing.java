@@ -9,7 +9,7 @@ public class Testing {
         TERenderer tr = new TERenderer();
         tr.initialize(80, 30);
         Engine e = new Engine();
-        TETile[][] world = e.interactWithInputString("n30001sssssss");
+        TETile[][] world = e.interactWithInputString("n3405578189098863152sssssss");
         tr.renderFrame(world);
     }
 }
