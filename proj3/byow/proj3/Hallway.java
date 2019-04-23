@@ -18,16 +18,22 @@ public class Hallway {
     private hallStates orient;
     private int dim;
     protected List<Room> rooms = new ArrayList<>();
+    private int index;
 
-    public Hallway(Tile ll, hallStates h, int dim) {
+    public Hallway(Tile ll, hallStates h, int dim, int index) {
         this.dim = dim;
         this.orient = h;
         this.ll = ll;
+        this.index = index;
         if (h.equals(hallStates.LR)) {
             this.ur = new Tile(ll.getX() + dim, ll.getY() + 2);
         } else if (h.equals(hallStates.UD)) {
             this.ur = new Tile(ll.getX() + 2, ll.getY() + dim);
         }
+    }
+
+    public int index() {
+        return index;
     }
 
     public Tile ll() {
@@ -90,6 +96,7 @@ public class Hallway {
     }
 
     public void putTiles(TETile[][] world) {
+
         for (int i = ll.getX(); i <= ur.getX(); i++) {
             for (int j = ll.getY(); j <= ur.getY(); j++) {
                 if (!world[i][j].equals(Tileset.FLOOR)) {

@@ -9,9 +9,10 @@ public class Main {
         if (args.length > 1) {
             System.out.println("Can only have one argument - the input string");
             System.exit(0);
-        } else if (args.length == 1) {
+        } else if (true) {
             Engine engine = new Engine();
-            engine.interactWithInputString(args[0]);
+            engine.interactWithInputString("n30001s");
+            //engine.interactWithInputString(args[0]);
             System.out.println(engine.toString());
         } else {
             Engine engine = new Engine();

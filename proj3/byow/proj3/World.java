@@ -8,9 +8,40 @@ import java.util.Random;
 
 public class World {
 
+    private RoomFactory rf;
+    private TETile[][] world;
+
+    public World(int seed) {
+        Random rng = new Random(seed);
+        //30001
+        //30000 one room case
+
+        TERenderer tr = new TERenderer();
+        tr.initialize(Constants.WIDTH, Constants.HEIGHT);
+        world = new TETile[Constants.WIDTH][Constants.HEIGHT];
+
+        for (int i = 0; i < Constants.WIDTH; i += 1) {
+            for (int j = 0; j < Constants.HEIGHT; j += 1) {
+                world[i][j] = Tileset.NOTHING;
+            }
+        }
+
+        rf = new RoomFactory(world, rng);
+
+        tr.renderFrame(world);
+    }
+
+    public TETile[][] getWorld() {
+        return world;
+    }
+
+
+    /**
     public static void main(String[] args) {
 
-        Random rng = new Random(190);
+        Random rng = new Random(6);
+        //30001
+        //30000 one room case
 
         TERenderer tr = new TERenderer();
         tr.initialize(Constants.WIDTH, Constants.HEIGHT);
@@ -34,4 +65,5 @@ public class World {
 
         tr.renderFrame(world);
     }
+     */
 }

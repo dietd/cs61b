@@ -11,8 +11,8 @@ public class RoomFactory {
     private Random rng;
     private int worldW = Constants.WIDTH - 1;
     private int worldH = Constants.HEIGHT - 1;
-    private int roomArea = 0;
-    private int hallwayArea = 0;
+    private int numRooms;
+    private int numHallways;
     private List<Room> rooms = new ArrayList<>();
     private List<Hallway> hallways = new ArrayList<>();
     private UnionFind connections;
@@ -20,17 +20,21 @@ public class RoomFactory {
     public RoomFactory(TETile[][] world, Random rng) {
 
         this.rng = rng;
-        int numRooms = rng.nextInt(40) + 1;
-        int numHalls = rng.nextInt(40);
-        connections = new UnionFind(numRooms);
+
+        this.numRooms = rng.nextInt(50) + 1;
+        this.numHallways = rng.nextInt(50) + 1;
+
+        connections = new UnionFind(numRooms + numHallways);
 
         while (rooms.size() < numRooms) {
             this.genRoom();
         }
 
-        while (hallways.size() < numHalls) {
+        while (hallways.size() < numHallways) {
             this.genHallway();
         }
+
+        clean();
 
         connections.printArray();
 
@@ -41,18 +45,36 @@ public class RoomFactory {
         for (Hallway h : hallways) {
             h.putTiles(world);
         }
-
     }
 
     private void clean() {
-        
-    }
+        int index = connections.maxIndex();
 
-    public Room getRandomRoom() {
-        if (rooms.size() == 1) {
-            return rooms.get(0);
+        List<Room> roomsRemove = new ArrayList<>();
+        List<Hallway> hallwaysRemove = new ArrayList<>();
+
+
+        for (Room r : rooms) {
+            if (!connections.connected(r.index(), index)) {
+                roomsRemove.add(r);
+            }
         }
-        return rooms.get(rng.nextInt(rooms.size() - 1));
+
+        for (Hallway h : hallways) {
+            System.out.println(h.index() + numRooms);
+            if (!connections.connected(h.index() + numRooms, index)) {
+                hallwaysRemove.add(h);
+            }
+        }
+
+        for (Room r : roomsRemove) {
+            rooms.remove(r);
+        }
+
+        for (Hallway h : hallwaysRemove) {
+            hallways.remove(h);
+        }
+
     }
 
     public Room genRoom() {
@@ -70,7 +92,6 @@ public class RoomFactory {
 
         if (temp.insideWorld() && !overlapsRoom(temp)) {
             rooms.add(temp);
-            roomArea += temp.size();
             return temp;
         }
 
@@ -87,6 +108,7 @@ public class RoomFactory {
 
         return false;
     }
+
 
     public void genHallway() {
 
@@ -105,25 +127,23 @@ public class RoomFactory {
             orientation = Hallway.hallStates.UD;
         }
 
-        Hallway h = new Hallway(new Tile(x, y), orientation, dim);
+        Hallway h = new Hallway(new Tile(x, y), orientation, dim, hallways.size());
 
         List<Room> rlist = connectedRooms(h);
         List<Hallway> hlist = connectedHalls(h);
 
-        if (h.insideWorld() && ((hlist.size() + rlist.size()) > 1) &&
+        if (h.insideWorld() && ((hlist.size() + rlist.size()) >= 1) &&
             !overlapsRoom(h) && !overlapsHall(h)) {
-            hallways.add(h);
-            connectAll(rlist);
-        }
-    }
 
-    private void connectAll(List<Room> rlist) {
-        if (rlist.isEmpty()) {
-           return;
-        }
-        int inital = rlist.get(0).index();
-        for (Room r : rlist) {
-            connections.union(inital, r.index());
+            hallways.add(h);
+
+            for (Room room : rlist) {
+                connections.union(h.index() + numRooms, room.index());
+            }
+
+            for (Hallway hall : hlist) {
+                connections.union(h.index() + numRooms, hall.index() + numRooms);
+            }
         }
     }
 

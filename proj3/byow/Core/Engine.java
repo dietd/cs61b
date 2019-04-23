@@ -3,6 +3,7 @@ package byow.Core;
 import byow.InputDemo.StringInputDevice;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import byow.proj3.World;
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -53,8 +54,6 @@ public class Engine {
 
         int num = 0;
 
-
-
         while (sd.possibleNextInput()) {
 
             char s = sd.getNextKey();
@@ -62,7 +61,6 @@ public class Engine {
             if (s == 'n') {
                 s = sd.getNextKey();
                 while (s != 's') {
-                    System.out.println(s);
                     num = num * 10 + Character.getNumericValue(s);
                     s = sd.getNextKey();
                 }
@@ -76,10 +74,7 @@ public class Engine {
             }
         }
 
-
-        System.out.println(num);
-
-        TETile[][] finalWorldFrame = null;
-        return finalWorldFrame;
+        World w = new World(num);
+        return w.getWorld();
     }
 }
