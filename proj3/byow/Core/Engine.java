@@ -65,13 +65,6 @@ public class Engine {
                     s = sd.getNextKey();
                 }
             }
-
-            if (s == ':') {
-                s = sd.getNextKey();
-                if (s =='q') {
-                    break;
-                }
-            }
         }
 
         World w = new World(num);

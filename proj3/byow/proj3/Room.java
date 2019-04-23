@@ -43,32 +43,25 @@ public class Room {
         return ur;
     }
 
-    public int size() {
-        return width * height;
-    }
-
     public boolean overlap(Room r) {
-        return !(r.ur.getX() < ll.getX() ||
-                r.ur.getY() < ll.getY() ||
-                ur.getX() < r.ll.getX() ||
-                ur.getY() < r.ll.getY()
-        );
+        return !(r.ur.getX() < ll.getX()
+                || r.ur.getY() < ll.getY()
+                || ur.getX() < r.ll.getX()
+                || ur.getY() < r.ll.getY());
     }
 
     public boolean overlap(Hallway h) {
-        return !(h.ur().getX() < ll.getX() ||
-                h.ur().getY() < ll.getY() ||
-                ur.getX() < h.ll().getX() ||
-                ur.getY() < h.ll().getY()
-        );
+        return !(h.ur().getX() < ll.getX()
+                || h.ur().getY() < ll.getY()
+                || ur.getX() < h.ll().getX()
+                || ur.getY() < h.ll().getY());
     }
 
     public boolean insideWorld() {
-        return (ll.getX() >= 0 &&
-                ur.getX() < Constants.WIDTH &&
-                ll.getY() >= 0 &&
-                ur.getY() < Constants.HEIGHT
-        );
+        return (ll.getX() >= 0
+                && ur.getX() < Constants.WIDTH
+                && ll.getY() >= 0
+                && ur.getY() < Constants.HEIGHT);
     }
 
     public void putTiles(TETile[][] world) {

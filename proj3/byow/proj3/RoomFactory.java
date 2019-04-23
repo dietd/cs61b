@@ -1,10 +1,11 @@
 package byow.proj3;
 
 import byow.TileEngine.TETile;
-import byow.TileEngine.Tileset;
-import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 
 public class RoomFactory {
 
@@ -21,8 +22,8 @@ public class RoomFactory {
 
         this.rng = rng;
 
-        this.numRooms = rng.nextInt(50) + 1;
-        this.numHallways = rng.nextInt(50) + 1;
+        this.numRooms = rng.nextInt(20) + 30;
+        this.numHallways = rng.nextInt(50 - numRooms) + numRooms;
 
         connections = new UnionFind(numRooms + numHallways);
 
@@ -35,8 +36,6 @@ public class RoomFactory {
         }
 
         clean();
-
-        connections.printArray();
 
         for (Room r : rooms) {
             r.putTiles(world);
@@ -61,7 +60,6 @@ public class RoomFactory {
         }
 
         for (Hallway h : hallways) {
-            System.out.println(h.index() + numRooms);
             if (!connections.connected(h.index() + numRooms, index)) {
                 hallwaysRemove.add(h);
             }
@@ -79,11 +77,11 @@ public class RoomFactory {
 
     public Room genRoom() {
 
-        int w = rng.nextInt(Constants.maxRoomDim
-                - Constants.minRoomDim) + Constants.minRoomDim;
+        int w = rng.nextInt(Constants.MAX_ROOM_DIM
+                - Constants.MIN_ROOM_DIM) + Constants.MIN_ROOM_DIM;
 
-        int h = rng.nextInt(Constants.maxRoomDim
-                - Constants.minRoomDim) + Constants.minRoomDim;
+        int h = rng.nextInt(Constants.MAX_ROOM_DIM
+                - Constants.MIN_ROOM_DIM) + Constants.MIN_ROOM_DIM;
 
         int x = Math.floorMod(rng.nextInt(), worldW);
         int y = Math.floorMod(rng.nextInt(), worldH);
@@ -112,19 +110,19 @@ public class RoomFactory {
 
     public void genHallway() {
 
-        int dim = rng.nextInt(Constants.maxHallwayDim
-                - Constants.minHallwayDim) + Constants.minHallwayDim;
+        int dim = rng.nextInt(Constants.MAX_HALLWAY_DIM
+                - Constants.MIN_HALLWAY_DIM) + Constants.MIN_HALLWAY_DIM;
 
         int x = Math.floorMod(rng.nextInt(), worldW);
         int y = Math.floorMod(rng.nextInt(), worldH);
 
         int o = Math.floorMod(rng.nextInt(), 2);
-        Hallway.hallStates orientation;
+        Hallway.HallStates orientation;
 
         if (o == 0) {
-            orientation = Hallway.hallStates.LR;
+            orientation = Hallway.HallStates.LR;
         } else {
-            orientation = Hallway.hallStates.UD;
+            orientation = Hallway.HallStates.UD;
         }
 
         Hallway h = new Hallway(new Tile(x, y), orientation, dim, hallways.size());
@@ -132,8 +130,8 @@ public class RoomFactory {
         List<Room> rlist = connectedRooms(h);
         List<Hallway> hlist = connectedHalls(h);
 
-        if (h.insideWorld() && ((hlist.size() + rlist.size()) >= 1) &&
-            !overlapsRoom(h) && !overlapsHall(h)) {
+        if (h.insideWorld() && ((hlist.size() + rlist.size()) > 1)
+                && !overlapsRoom(h) && !overlapsHall(h)) {
 
             hallways.add(h);
 
