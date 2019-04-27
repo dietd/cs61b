@@ -3,10 +3,11 @@ package byow.proj3;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hallway {
+public class Hallway implements Serializable {
 
     protected enum HallStates {
         LR, UD
@@ -107,29 +108,4 @@ public class Hallway {
     public String toString() {
         return ll.toString() + ", " + ur.toString();
     }
-
-    /**
-
-     public static Hallway getLine(Tile t1, Tile t2) {
-
-     if (t1.getY() == t2.getY()) {
-     if (t1.getX() < t2.getX()) {
-     return new Hallway(new Tile(t1.getX(), t1.getY() - 1),
-     hallStates.LR, t2.getX() - t1.getX() + 1);
-     }
-     return new Hallway(new Tile(t2.getX(), t2.getY() - 1),
-     hallStates.LR, t1.getX() - t2.getX() + 1);
-
-     } else if (t1.getX() == t2.getX()) {
-
-     if (t1.getY() < t2.getY()) {
-     return new Hallway(new Tile(t1.getX() - 1, t1.getY() - 1),
-     hallStates.UD, t2.getY() - t1.getY() + 1);
-     }
-     return new Hallway(new Tile(t2.getX() - 1, t2.getY() - 1),
-     hallStates.UD, t1.getY() - t2.getY() + 1);
-     }
-     return null;
-     }
-     */
 }

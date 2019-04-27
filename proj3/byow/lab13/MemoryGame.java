@@ -1,5 +1,6 @@
 package byow.lab13;
 
+import edu.princeton.cs.algs4.Stopwatch;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.Color;
@@ -47,16 +48,34 @@ public class MemoryGame {
     }
 
     public String generateRandomString(int n) {
-        //TODO: Generate random string of letters of length n
-        return null;
+        StringBuilder randString = new StringBuilder();
+        for (int i = 0; i < n; i += 1) {
+            randString.append(CHARACTERS[rand.nextInt(CHARACTERS.length)]);
+        }
+        return randString.toString();
     }
 
     public void drawFrame(String s) {
+        StdDraw.clear(Color.BLACK);
+        //Font font = new Font("Monaco", Font.BOLD, 30);
+        //StdDraw.setFont(font);
+        StdDraw.text(this.width / 2, this.height / 2, s);
+        StdDraw.show();
         //TODO: Take the string and display it in the center of the screen
         //TODO: If game is not over, display relevant game information at the top of the screen
     }
 
     public void flashSequence(String letters) {
+        Stopwatch s = new Stopwatch();
+        for (int i = 0; i < letters.length(); i += 1) {
+            double begin = s.elapsedTime();
+            double end = begin;
+            while (end - begin < 500) {
+                end = s.elapsedTime();
+            }
+
+        }
+
         //TODO: Display each character in letters, making sure to blank the screen between letters
     }
 

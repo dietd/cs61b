@@ -1,6 +1,6 @@
 package byow.proj3;
 
-public class UnionFind {
+public class UnionFind{
 
     private int[] unions;
 

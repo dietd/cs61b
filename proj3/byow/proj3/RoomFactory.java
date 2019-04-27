@@ -2,12 +2,12 @@ package byow.proj3;
 
 import byow.TileEngine.TETile;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
-public class RoomFactory {
+public class RoomFactory implements Serializable {
 
     private Random rng;
     private int worldW = Constants.WIDTH - 1;
@@ -22,8 +22,8 @@ public class RoomFactory {
 
         this.rng = rng;
 
-        this.numRooms = 30;
-        this.numHallways = rng.nextInt(20) + 10;
+        this.numRooms = 30; //30
+        this.numHallways = rng.nextInt(20) + 10; // (20) + 10
 
         connections = new UnionFind(numRooms + numHallways);
 
@@ -46,12 +46,16 @@ public class RoomFactory {
         }
     }
 
+    public Room getRandomRoom() {
+        return rooms.get(0);
+    }
+
     private void clean() {
+
         int index = connections.maxIndex();
 
         List<Room> roomsRemove = new ArrayList<>();
         List<Hallway> hallwaysRemove = new ArrayList<>();
-
 
         for (Room r : rooms) {
             if (!connections.connected(r.index(), index)) {
@@ -72,7 +76,6 @@ public class RoomFactory {
         for (Hallway h : hallwaysRemove) {
             hallways.remove(h);
         }
-
     }
 
     public Room genRoom() {
@@ -130,7 +133,7 @@ public class RoomFactory {
         List<Room> rlist = connectedRooms(h);
         List<Hallway> hlist = connectedHalls(h);
 
-        if (h.insideWorld() && ((hlist.size() + rlist.size()) >= 1)
+        if (h.insideWorld() && ((hlist.size() + rlist.size()) > 1)
                 && !overlapsRoom(h) && !overlapsHall(h)) {
 
             hallways.add(h);

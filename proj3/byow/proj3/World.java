@@ -3,18 +3,19 @@ package byow.proj3;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.io.*;
 import java.util.Random;
 
-public class World {
+public class World implements Serializable {
 
-    private RoomFactory rf;
     private TETile[][] world;
+    private Tile avatar;
+    private int seed;
+    private Random rng;
 
     public World(int seed) {
-        Random rng = new Random(seed);
-        //30001
-        //30000 one room case
 
+        this.rng = new Random(seed);
 
         world = new TETile[Constants.WIDTH][Constants.HEIGHT];
 
@@ -24,44 +25,61 @@ public class World {
             }
         }
 
-        rf = new RoomFactory(world, rng);
-
-
+        RoomFactory rf = new RoomFactory(world, rng);
+        avatar = rf.getRandomRoom().getRandomInside(rng);
+        world[avatar.getX()][avatar.getY()] = Tileset.AVATAR;
+        this.seed = seed;
     }
 
     public TETile[][] getWorld() {
         return world;
     }
 
+    public int getSeed() {
+        return seed;
+    }
 
-    /**
-     public static void main(String[] args) {
+    private boolean isOccupied(int x, int y) {
+        return world[x][y].character() == '#';
+    }
 
-     Random rng = new Random(6);
-     //30001
-     //30000 one room case
+    public void moveRight() {
+        int x = avatar.getX() + 1;
+        int y = avatar.getY();
+        if (!isOccupied(x, y)) {
+            world[x][y] = Tileset.AVATAR;
+            world[x - 1][y] = Tileset.FLOOR;
+            avatar = new Tile(x, y);
+        }
+    }
 
-     TERenderer tr = new TERenderer();
-     tr.initialize(Constants.WIDTH, Constants.HEIGHT);
-     TETile[][] world = new TETile[Constants.WIDTH][Constants.HEIGHT];
+    public void moveLeft() {
+        int x = avatar.getX() - 1;
+        int y = avatar.getY();
+        if (!isOccupied(x, y)) {
+            world[x][y] = Tileset.AVATAR;
+            world[x + 1][y] = Tileset.FLOOR;
+            avatar = new Tile(x, y);
+        }
+    }
 
-     for (int i = 0; i < Constants.WIDTH; i += 1) {
-     for (int j = 0; j < Constants.HEIGHT; j += 1) {
-     world[i][j] = Tileset.NOTHING;
-     }
-     }
+    public void moveUp() {
+        int x = avatar.getX();
+        int y = avatar.getY() + 1;
+        if (!isOccupied(x, y)) {
+            world[x][y] = Tileset.AVATAR;
+            world[x][y - 1] = Tileset.FLOOR;
+            avatar = new Tile(x, y);
+        }
+    }
 
-     RoomFactory rf = new RoomFactory(world, rng);
-
-     //Hallway h1 = new Hallway(new Tile(0, 0), Hallway.hallStates.LR, 5);
-     //Hallway h2 = new Hallway(new Tile(5, 0), Hallway.hallStates.UD, 5);
-
-     //System.out.println(h1.connected(h2));
-
-     //h1.putTiles(world);
-     // h2.putTiles(world);
-
-     tr.renderFrame(world);
-     }
-     */
+    public void moveDown() {
+        int x = avatar.getX();
+        int y = avatar.getY() - 1;
+        if (!isOccupied(x, y)) {
+            world[x][y] = Tileset.AVATAR;
+            world[x][y + 1] = Tileset.FLOOR;
+            avatar = new Tile(x, y);
+        }
+    }
 }
