@@ -7,6 +7,7 @@ import byow.TileEngine.TETile;
 import byow.proj3.Game;
 import byow.proj3.World;
 import byow.proj3.files.FileSystem;
+import edu.princeton.cs.algs4.Stopwatch;
 import edu.princeton.cs.introcs.StdDraw;
 
 public class Engine {
@@ -24,6 +25,8 @@ public class Engine {
         int num = 0;
         boolean exists = false;
 
+        Stopwatch timer = new Stopwatch();
+
         KeyboardInputSource keys = new KeyboardInputSource();
 
         while (keys.possibleNextInput()) {
@@ -35,39 +38,46 @@ public class Engine {
                 if (s == 'l') {
                     g.setWorld(FileSystem.load());
                     g.initializeTRenderer();
-                    System.out.println("Loaded");
+                    System.out.println("loaded world");
                     exists = true;
                 }
 
                 if (s == 'n') {
+
                     g.drawNumber("");
+
                     while (true) {
                         s = keys.getNextKey();
                         if (s == 's') {
                             break;
                         }
-                        num = num * 10 + Character.getNumericValue(s);
+                        if (Character.isDigit(s)) {
+                            num = num * 10 + Character.getNumericValue(s);
+                        }
                         g.drawNumber(Integer.toString(num));
                     }
+
                     g.setWorld(new World(num));
-                    System.out.println("setWorld");
+                    System.out.println("the world is set");
                     g.initializeTRenderer();
                     exists = true;
                 }
 
                 if (s == 'q') {
-                    System.out.println("Exiting");
+                    System.out.println("exited");
                     System.exit(0);
                 }
             }
 
             if (exists) {
 
+                double start = timer.elapsedTime();
+
                 while (true) {
 
-                    g.drawWorld(StdDraw.mouseX(), StdDraw.mouseY());
+                    StdDraw.pause(70);
 
-                    System.out.println((int) StdDraw.mouseX() + " " + (int) StdDraw.mouseY());
+                    g.drawWorld(StdDraw.mouseX(), StdDraw.mouseY());
 
                     if (StdDraw.hasNextKeyTyped()) {
 
@@ -92,10 +102,20 @@ public class Engine {
                         if (s == ':') {
                             s = keys.getNextKey();
                             if (s == 'q') {
+                                System.out.println("exited and saved");
                                 FileSystem.save(g.getWorld());
                                 System.exit(0);
                             }
                         }
+                    }
+
+                    double end = timer.elapsedTime();
+
+                    if (end - start > 1) {
+                        //System.out.println("updated");
+                        g.getWorld().updateEnemy();
+                        g.getWorld().drawEnemyPath();
+                        start = timer.elapsedTime();
                     }
                 }
             }

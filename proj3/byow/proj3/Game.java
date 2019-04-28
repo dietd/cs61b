@@ -1,19 +1,22 @@
 package byow.proj3;
 
 import byow.TileEngine.TERenderer;
+import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
 
 public class Game {
     private World world;
-    private TERenderer tr = new TERenderer();
     private boolean isSet;
+    private TERenderer tr = new TERenderer();
+    private Font boldFont = new Font("Monaco", Font.BOLD, 30);
+    private Font hudFont = new Font("Monaco", Font.BOLD, 17);
+    private Font gameFont = new Font("Monaco", Font.BOLD, 14);
 
     public Game() {
-        StdDraw.setCanvasSize(Constants.PIXELW, Constants.PIXELH);
-        Font font = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(font);
+        StdDraw.setCanvasSize(Constants.PIXELW, Constants.PIXELH + 4 * 16);
+        StdDraw.setFont(boldFont);
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.setXscale(0, Constants.PIXELW);
         StdDraw.setYscale(0, Constants.PIXELH);
@@ -33,27 +36,36 @@ public class Game {
 
     public void initializeTRenderer() {
         tr.initialize(Constants.WIDTH, Constants.HEIGHT);
-
     }
 
     public void drawWorld(double x, double y) {
+
         if (isSet) {
+
             x = (int) x;
             y = (int) y;
 
             clear();
 
-            if (x > Constants.WIDTH) {
+            if (x >= Constants.WIDTH) {
                 x = Constants.WIDTH - 1;
             }
 
-            if (y > Constants.HEIGHT) {
+            if (y >= Constants.HEIGHT) {
                 y = Constants.HEIGHT - 1;
             }
 
-            StdDraw.setPenColor(Color.WHITE);
-            StdDraw.text(14,14, this.world.getWorld()[(int) x][(int) y].description());
+            StdDraw.setFont(gameFont);
             this.tr.renderFrame(this.world.getWorld());
+
+            //Put the drawn paths
+
+            this.world.drawEnemyPath();
+
+            StdDraw.setPenColor(Color.WHITE);
+            StdDraw.setFont(hudFont);
+            StdDraw.text(5, 29, this.world.getWorld()[(int) x][(int) y].description());
+
             show();
         }
     }
