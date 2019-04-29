@@ -1,7 +1,7 @@
 package byow.proj3;
 
 import byow.TileEngine.TERenderer;
-import byow.TileEngine.Tileset;
+
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
@@ -11,6 +11,7 @@ public class Game {
     private boolean isSet;
     private TERenderer tr = new TERenderer();
     private Font boldFont = new Font("Monaco", Font.BOLD, 30);
+    private Font giantFont = new Font("Monaco", Font.BOLD, 40);
     private Font hudFont = new Font("Monaco", Font.BOLD, 17);
     private Font gameFont = new Font("Monaco", Font.BOLD, 14);
 
@@ -38,7 +39,7 @@ public class Game {
         tr.initialize(Constants.WIDTH, Constants.HEIGHT);
     }
 
-    public void drawWorld(double x, double y) {
+    public void drawWorld(double x, double y, boolean toggle) {
 
         if (isSet) {
 
@@ -59,21 +60,28 @@ public class Game {
             this.tr.renderFrame(this.world.getWorld());
 
             //Put the drawn paths
-
-            this.world.drawEnemyPath();
+            if (toggle) {
+                this.world.drawEnemyPath();
+            }
 
             StdDraw.setPenColor(Color.WHITE);
             StdDraw.setFont(hudFont);
-            StdDraw.text(5, 29, this.world.getWorld()[(int) x][(int) y].description());
+
+            StdDraw.text(5, 29, this.world.getAvatarName());
+            StdDraw.text(12, 29, this.world.getHealthString());
+            StdDraw.text(60, 29, "Controls: (M) Rename (L) Lore");
+
+            StdDraw.text(76, 29, this.world.getWorld()[(int) x][(int) y].description());
 
             show();
         }
     }
 
-
     public void drawMainMenuFrame() {
         clear();
-        StdDraw.text(Constants.PIXELW / 2, 3 * Constants.PIXELH / 4, "CS61B The Game");
+        StdDraw.setFont(giantFont);
+        StdDraw.text(Constants.PIXELW / 2, 3 * Constants.PIXELH / 4, "War of the Roses");
+        StdDraw.setFont(boldFont);
         StdDraw.text(Constants.PIXELW / 2, Constants.PIXELH / 2, "New World (N)");
         StdDraw.text(Constants.PIXELW / 2, 1.5 * Constants.PIXELH / 4, "Load World (L)");
         StdDraw.text(Constants.PIXELW / 2, Constants.PIXELH / 4, "Quit World (Q)");
@@ -84,6 +92,13 @@ public class Game {
         clear();
         StdDraw.text(Constants.PIXELW / 2, 3 * Constants.PIXELH / 4, "Please enter a seed and press 's'");
         StdDraw.text(Constants.PIXELW / 2, Constants.PIXELH / 2, "[" + num + "]");
+        show();
+    }
+
+    public void drawName(String name) {
+        clear();
+        StdDraw.text(40, 20,"Input name then press '#'");
+        StdDraw.text(40,15,"[" + name + "]");
         show();
     }
 

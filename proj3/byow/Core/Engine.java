@@ -24,6 +24,7 @@ public class Engine {
         Game g = new Game();
         int num = 0;
         boolean exists = false;
+        boolean togglePaths = false;
 
         Stopwatch timer = new Stopwatch();
 
@@ -77,7 +78,8 @@ public class Engine {
 
                     StdDraw.pause(70);
 
-                    g.drawWorld(StdDraw.mouseX(), StdDraw.mouseY());
+
+                    g.drawWorld(StdDraw.mouseX(), StdDraw.mouseY(), togglePaths);
 
                     if (StdDraw.hasNextKeyTyped()) {
 
@@ -99,6 +101,26 @@ public class Engine {
                             g.getWorld().moveDown();
                         }
 
+                        if (s == 'p') {
+                            togglePaths = !togglePaths;
+                        }
+
+                        if (s == 'm') {
+                            String name = "";
+                            g.drawName(name);
+                            while (true) {
+                                s = keys.getNextKey();
+                                if (s == '#') {
+                                    break;
+                                }
+                                if (Character.isLetter(s) || s == ' ') {
+                                     name += s;
+                                }
+                                g.drawName(name);
+                            }
+                            g.getWorld().setAvatarName(name);
+                        }
+
                         if (s == ':') {
                             s = keys.getNextKey();
                             if (s == 'q') {
@@ -114,7 +136,7 @@ public class Engine {
                     if (end - start > 1) {
                         //System.out.println("updated");
                         g.getWorld().updateEnemy();
-                        g.getWorld().drawEnemyPath();
+                        g.getWorld().updateHealth();
                         start = timer.elapsedTime();
                     }
                 }

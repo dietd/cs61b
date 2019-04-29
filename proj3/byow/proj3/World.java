@@ -5,7 +5,6 @@ import byow.TileEngine.Tileset;
 import byow.proj3.ai.AStarGraph;
 import byow.proj3.ai.AStarSolver;
 import byow.proj3.ai.TileGraph;
-import byow.proj3.ai.WeirdSolver;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -16,11 +15,14 @@ public class World implements Serializable {
 
     private TETile[][] world;
     private Tile avatar;
+    private int health = 3;
+    private String avatarName = "Duke of York";
     private Tile enemy;
     private int seed;
     private Random rng;
     private TileGraph graph;
     private List<Tile> enemyPath;
+
 
     public World(int seed) {
 
@@ -47,6 +49,14 @@ public class World implements Serializable {
 
     public TETile[][] getWorld() {
         return world;
+    }
+
+    public String getAvatarName() {
+        return avatarName;
+    }
+
+    public void setAvatarName(String name) {
+        this.avatarName = name;
     }
 
     public int getSeed() {
@@ -108,6 +118,8 @@ public class World implements Serializable {
         enemy = t;
     }
 
+
+
     public AStarGraph<Tile> getGraph() {
         return graph;
     }
@@ -120,14 +132,33 @@ public class World implements Serializable {
         this.enemyPath = astar.solution();
     }
 
+    public void updateHealth() {
+        if (avatar.equals(enemy)) {
+            health -= 1;
+        }
+    }
+
+    public String getHealthString() {
+        String n = "";
+        for (int i = 0; i < health; i += 1) {
+            n += " ❤";
+        }
+        if (health <= 0) {
+            return "GAME OVER";
+        }
+        return n;
+    }
+
     public void drawEnemyPath() {
-        if (enemyPath.size() > 3) {
-            for (int i = 1; i < enemyPath.size() - 1; i += 1) {
-                Tile t = enemyPath.get(i);
-                if (!t.equals(avatar) && !t.equals(enemy)) {
-                    Tileset.HLFLOOR.draw(t.getX(), t.getY());
+
+            if (enemyPath.size() > 3) {
+                for (int i = 1; i < enemyPath.size() - 1; i += 1) {
+                    Tile t = enemyPath.get(i);
+                    if (!t.equals(avatar) && !t.equals(enemy)) {
+                        Tileset.HLFLOOR.draw(t.getX(), t.getY());
+                    }
                 }
             }
-        }
+
     }
 }
