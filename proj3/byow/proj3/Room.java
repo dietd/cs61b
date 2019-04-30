@@ -3,6 +3,8 @@ package byow.proj3;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Room {
@@ -19,6 +21,32 @@ public class Room {
         this.width = width;
         this.height = height;
         this.index = index;
+    }
+
+    public Tile getRandomWall(Random rng) {
+
+        int side = rng.nextInt(4);
+        List<Tile> walls = new ArrayList<>();
+
+        if (side == 0) {
+            for (int y = ll.getY() + 1; y < ur.getY() - 1; y += 1) {
+                walls.add(new Tile(ll.getX(), y));
+            }
+        } else if (side == 1) {
+            for (int y = ll.getY() + 1; y < ur.getY() - 1; y += 1) {
+                walls.add(new Tile(ur.getX(), y));
+            }
+        } else if (side == 2) {
+            for (int x = ll.getX() + 1; x < ur.getX() - 1; x += 1) {
+                walls.add(new Tile(x, ur.getY()));
+            }
+        } else {
+            for (int x = ll.getX() + 1; x < ur.getX() - 1; x += 1) {
+                walls.add(new Tile(x, ll.getY()));
+            }
+        }
+
+        return walls.get(rng.nextInt(walls.size()));
     }
 
     public Tile getRandomInside(Random rng) {

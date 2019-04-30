@@ -1,7 +1,5 @@
 package byow.proj3;
 
-import byow.proj3.ai.AStarGraph;
-
 import java.io.Serializable;
 
 public class Tile implements Serializable {
@@ -38,7 +36,7 @@ public class Tile implements Serializable {
         if (other.getClass() != this.getClass()) {
             return false;
         }
-        Tile otherTile= (Tile) other;
+        Tile otherTile = (Tile) other;
         return this.id.equals(otherTile.id);
     }
 

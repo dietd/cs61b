@@ -6,23 +6,28 @@ import byow.proj3.ai.AStarGraph;
 import byow.proj3.ai.AStarSolver;
 import byow.proj3.ai.TileGraph;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Random;
+
 
 public class World implements Serializable {
 
     private TETile[][] world;
-    private Tile avatar;
-    private int health = 3;
+    private int level = 1;
+    private Tile avatar, door;
+    private int numKeys;
     private String avatarName = "Duke of York";
-    private Tile enemy;
+    private int health = 5;
+    private List<Tile> enemies = new ArrayList<>();
+    private List<List<Tile>> enemyPaths = new ArrayList<>();
+    private Set<Tile> keys = new HashSet<>();
     private int seed;
     private Random rng;
     private TileGraph graph;
-    private List<Tile> enemyPath;
-
 
     public World(int seed) {
 
@@ -38,13 +43,89 @@ public class World implements Serializable {
 
         RoomFactory rf = new RoomFactory(world, rng);
         this.graph = new TileGraph(world);
-        this.enemyPath = new ArrayList<>();
 
-        avatar = rf.getRandomRoom().getRandomInside(rng);
-        enemy = rf.getRandomRoom().getRandomInside(rng);
-        world[enemy.getX()][enemy.getY()] = Tileset.FLOWER;
+        Room startingRoom = rf.getRandomRoom();
+        int startingRoomIndex = startingRoom.index();
+        this.avatar = startingRoom.getRandomInside(rng);
+
+        this.numKeys = rng.nextInt(3) + 1;
+        while (keys.size() < numKeys) {
+            Tile temp = rf.getRandomRoom().getRandomInside(rng);
+            if (!temp.equals(avatar)) {
+                keys.add(temp);
+            }
+        }
+
+        int numEnemies = rng.nextInt(2) + 1;
+        while (enemies.size() < numEnemies) {
+
+            Room enemyRoom = rf.getRandomRoom();
+            int enemyRoomIndex = enemyRoom.index();
+            Tile temp = enemyRoom.getRandomInside(rng);
+            boolean overlapsKey = false;
+
+            for (Tile k : keys) {
+                if (k.equals(temp)) {
+                    overlapsKey = true;
+                }
+            }
+
+            if (enemyRoomIndex != startingRoomIndex && !overlapsKey) {
+                enemies.add(temp);
+                enemyPaths.add(new ArrayList<>());
+            }
+        }
+
+        door = rf.getRandomRoom().getRandomWall(rng);
+        while (tileEquals(world[door.getX()][door.getY()], Tileset.FLOOR)) {
+            door = rf.getRandomRoom().getRandomWall(rng);
+        }
+
         world[avatar.getX()][avatar.getY()] = Tileset.AVATAR;
+        world[door.getX()][door.getY()] = Tileset.LOCKED_DOOR;
+
+        for (Tile e : enemies) {
+            world[e.getX()][e.getY()] = Tileset.FLOWER;
+        }
+
+        for (Tile k : keys) {
+            world[k.getX()][k.getY()] = Tileset.KEY;
+        }
+
         this.seed = seed;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int i) {
+        this.level = i;
+    }
+
+    public World createNewLevel() {
+        World w = new World(rng.nextInt());
+        w.setLevel(this.level + 1);
+        return w;
+    }
+
+    public int getNumKeys() {
+        return numKeys;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public boolean updateDoor() {
+        if (numKeys == 0) {
+            world[door.getX()][door.getY()] = Tileset.UNLOCKED_DOOR;
+        }
+        return numKeys == 0 && avatar.equals(door);
+    }
+
+    public boolean updateGameOverStatus() {
+        return health == 0;
     }
 
     public TETile[][] getWorld() {
@@ -64,7 +145,8 @@ public class World implements Serializable {
     }
 
     private boolean isOccupied(int x, int y) {
-        return isWall(x, y) || world[x][y].description().equals("flower");
+        return isWall(x, y) || tileEquals(world[x][y], Tileset.NOTHING)
+                || tileEquals(world[x][y], Tileset.LOCKED_DOOR);
     }
 
     private boolean isWall(int x, int y) {
@@ -75,8 +157,17 @@ public class World implements Serializable {
         int x = avatar.getX() + 1;
         int y = avatar.getY();
         if (!isOccupied(x, y)) {
+            if (keys.contains(new Tile(x, y))) {
+                numKeys -= 1;
+                keys.remove(new Tile(x, y));
+                updateDoor();
+            }
             world[x][y] = Tileset.AVATAR;
             world[x - 1][y] = Tileset.FLOOR;
+            if (enemies.contains(new Tile(x, y))) {
+                health -= 1;
+                //world[x - 1][y] = Tileset.FLOWER;
+            }
             avatar = new Tile(x, y);
         }
     }
@@ -85,8 +176,17 @@ public class World implements Serializable {
         int x = avatar.getX() - 1;
         int y = avatar.getY();
         if (!isOccupied(x, y)) {
+            if (keys.contains(new Tile(x, y))) {
+                numKeys -= 1;
+                keys.remove(new Tile(x, y));
+                updateDoor();
+            }
             world[x][y] = Tileset.AVATAR;
             world[x + 1][y] = Tileset.FLOOR;
+            if (enemies.contains(new Tile(x, y))) {
+                health -= 1;
+                //world[x + 1][y] = Tileset.FLOWER;
+            }
             avatar = new Tile(x, y);
         }
     }
@@ -95,8 +195,17 @@ public class World implements Serializable {
         int x = avatar.getX();
         int y = avatar.getY() + 1;
         if (!isOccupied(x, y)) {
+            if (keys.contains(new Tile(x, y))) {
+                numKeys -= 1;
+                keys.remove(new Tile(x, y));
+                updateDoor();
+            }
             world[x][y] = Tileset.AVATAR;
             world[x][y - 1] = Tileset.FLOOR;
+            if (enemies.contains(new Tile(x, y))) {
+                health -= 1;
+                //world[x][y - 1] = Tileset.FLOWER;
+            }
             avatar = new Tile(x, y);
         }
     }
@@ -105,60 +214,78 @@ public class World implements Serializable {
         int x = avatar.getX();
         int y = avatar.getY() - 1;
         if (!isOccupied(x, y)) {
+            if (keys.contains(new Tile(x, y))) {
+                numKeys -= 1;
+                keys.remove(new Tile(x, y));
+                updateDoor();
+            }
             world[x][y] = Tileset.AVATAR;
             world[x][y + 1] = Tileset.FLOOR;
+            if (enemies.contains(new Tile(x, y))) {
+                health -= 1;
+                //world[x][y] = Tileset.FLOWER;
+            }
             avatar = new Tile(x, y);
         }
     }
 
-    /** Moves enemy to inputted tile*/
-    public void moveEnemy(Tile t) {
-        world[enemy.getX()][enemy.getY()] = Tileset.FLOOR;
-        world[t.getX()][t.getY()] = Tileset.FLOWER;
-        enemy = t;
+    private boolean tileEquals(TETile a, TETile b) {
+        return a.description().equals(b.description());
     }
 
+    /** Moves enemy to inputted tile*/
+    public void moveEnemy(int i, Tile t) {
 
+        Tile enemy = enemies.get(i);
+
+        if (tileEquals(world[t.getX()][t.getY()], Tileset.AVATAR)
+            || tileEquals(world[enemy.getX()][enemy.getY()], Tileset.AVATAR)) {
+            health -= 1;
+        }
+
+        if (keys.contains(enemy)) {
+            world[enemy.getX()][enemy.getY()] = Tileset.KEY;
+        } else {
+            world[enemy.getX()][enemy.getY()] = Tileset.FLOOR;
+        }
+
+        world[t.getX()][t.getY()] = Tileset.FLOWER;
+        enemies.set(i, t);
+    }
 
     public AStarGraph<Tile> getGraph() {
         return graph;
     }
 
     public void updateEnemy() {
-        AStarSolver<Tile> astar = new AStarSolver<>(graph, enemy, avatar, 20);
-        if (astar.solution().size() > 1) {
-            moveEnemy(astar.solution().get(1));
-        }
-        this.enemyPath = astar.solution();
-    }
+        for (int i = 0; i < enemies.size(); i += 1) {
+            Tile e = enemies.get(i);
+            AStarSolver<Tile> astar = new AStarSolver<>(graph, e, avatar, 20);
 
-    public void updateHealth() {
-        if (avatar.equals(enemy)) {
-            health -= 1;
-        }
-    }
+            if (astar.solution().size() > 1) {
+                moveEnemy(i, astar.solution().get(1));
+            } else if (astar.solution().size() == 1) {
+                health -= 1;
+            }
 
-    public String getHealthString() {
-        String n = "";
-        for (int i = 0; i < health; i += 1) {
-            n += " ❤";
+            enemyPaths.set(i, astar.solution());
         }
-        if (health <= 0) {
-            return "GAME OVER";
-        }
-        return n;
     }
 
     public void drawEnemyPath() {
-
+        for (List<Tile> enemyPath : enemyPaths) {
             if (enemyPath.size() > 3) {
                 for (int i = 1; i < enemyPath.size() - 1; i += 1) {
                     Tile t = enemyPath.get(i);
-                    if (!t.equals(avatar) && !t.equals(enemy)) {
+                    if (tileEquals(world[t.getX()][t.getY()], Tileset.HLFLOOR)) {
+                        break;
+                    }
+                    if (!t.equals(avatar)
+                        && !tileEquals(world[t.getX()][t.getY()], Tileset.FLOWER)) {
                         Tileset.HLFLOOR.draw(t.getX(), t.getY());
                     }
                 }
             }
-
+        }
     }
 }

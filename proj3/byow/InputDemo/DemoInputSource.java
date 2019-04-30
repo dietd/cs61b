@@ -6,6 +6,7 @@ package byow.InputDemo;
  * from they keyboard, from a random sequence, from a string, or whatever else.
  */
 public class DemoInputSource {
+
     private static final int KEYBOARD = 0;
     private static final int RANDOM = 1;
     private static final int STRING = 2;

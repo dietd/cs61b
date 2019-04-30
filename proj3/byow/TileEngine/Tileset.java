@@ -23,8 +23,8 @@ public class Tileset {
             "wall");
     public static final TETile FLOOR = new TETile('·', new Color(128, 192, 128), Color.black,
             "floor");
-    public static final TETile HLFLOOR = new TETile('·', new Color(255,140,0), Color.black,
-            "floor");
+    public static final TETile HLFLOOR = new TETile('·', new Color(255, 140, 0), Color.black,
+            "highlighted floor");
     public static final TETile NOTHING = new TETile(' ', Color.black, Color.black, "nothing");
     public static final TETile GRASS = new TETile('"', Color.green, Color.black, "grass");
     public static final TETile WATER = new TETile('≈', Color.blue, Color.black, "water");
@@ -36,6 +36,7 @@ public class Tileset {
     public static final TETile SAND = new TETile('▒', Color.yellow, Color.black, "sand");
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
+    public static final TETile KEY = new TETile('♦', Color.yellow, Color.black, "key");
 }
 
 

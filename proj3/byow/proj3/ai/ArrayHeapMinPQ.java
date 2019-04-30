@@ -3,7 +3,7 @@ package byow.proj3.ai;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
-public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>{
+public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     private T[] heap;
     private HashMap<T, Double> pmap;

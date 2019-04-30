@@ -47,7 +47,7 @@ public class RoomFactory implements Serializable {
     }
 
     public Room getRandomRoom() {
-        return rooms.get(0);
+        return rooms.get(rng.nextInt(rooms.size()));
     }
 
     private void clean() {
@@ -95,21 +95,17 @@ public class RoomFactory implements Serializable {
             rooms.add(temp);
             return temp;
         }
-
         return null;
     }
 
     private boolean overlapsRoom(Room r) {
-
         for (Room n : rooms) {
             if (n.overlap(r)) {
                 return true;
             }
         }
-
         return false;
     }
-
 
     public void genHallway() {
 

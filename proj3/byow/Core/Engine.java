@@ -4,7 +4,7 @@ import byow.InputDemo.KeyboardInputSource;
 import byow.InputDemo.StringInputDevice;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
-import byow.proj3.Game;
+import byow.proj3.GameRenderer;
 import byow.proj3.World;
 import byow.proj3.files.FileSystem;
 import edu.princeton.cs.algs4.Stopwatch;
@@ -20,125 +20,139 @@ public class Engine {
      * including inputs from the main menu.
      */
     public void interactWithKeyboard() {
-
-        Game g = new Game();
-        int num = 0;
-        boolean exists = false;
-        boolean togglePaths = false;
-
+        GameRenderer g = new GameRenderer();
         Stopwatch timer = new Stopwatch();
-
         KeyboardInputSource keys = new KeyboardInputSource();
+        mainMenuLoop(g, keys);
+        gameLoop(g, keys, timer);
+    }
 
-        while (keys.possibleNextInput()) {
+    private void mainMenuLoop(GameRenderer g, KeyboardInputSource keys) {
 
-            if (!exists) {
+        while (true) {
 
-                char s = keys.getNextKey();
+            char s = keys.getNextKey();
 
-                if (s == 'l') {
-                    g.setWorld(FileSystem.load());
-                    g.initializeTRenderer();
-                    System.out.println("loaded world");
-                    exists = true;
-                }
+            g.drawMainMenuFrame();
 
-                if (s == 'n') {
+            StdDraw.pause(50);
 
-                    g.drawNumber("");
+            if (s == 'l') {
+                g.setWorld(FileSystem.load());
+                System.out.println("loaded world");
+                break;
+            }
 
-                    while (true) {
-                        s = keys.getNextKey();
-                        if (s == 's') {
-                            break;
-                        }
-                        if (Character.isDigit(s)) {
-                            num = num * 10 + Character.getNumericValue(s);
-                        }
-                        g.drawNumber(Integer.toString(num));
+            if (s == 'n') {
+
+                g.drawNumber("");
+
+                int num = 0;
+
+                while (true) {
+                    s = keys.getNextKey();
+                    if (s == 's') {
+                        break;
                     }
-
-                    g.setWorld(new World(num));
-                    System.out.println("the world is set");
-                    g.initializeTRenderer();
-                    exists = true;
+                    if (Character.isDigit(s)) {
+                        num = num * 10 + Character.getNumericValue(s);
+                    }
+                    g.drawNumber(Integer.toString(num));
                 }
 
-                if (s == 'q') {
-                    System.out.println("exited");
-                    System.exit(0);
+                g.drawGenWorldFrame();
+                g.setWorld(new World(num));
+                System.out.println("the world is set");
+                break;
+            }
+
+            if (s == 'm') {
+                g.drawLoreFrame();
+                while (true) {
+                    s = keys.getNextKey();
+                    if (s == '#') {
+                        break;
+                    }
+                    g.drawLoreFrame();
                 }
             }
 
-            if (exists) {
+            if (s == 'q') {
+                System.out.println("exited");
+                return;
+            }
+        }
+    }
 
-                double start = timer.elapsedTime();
+    private void gameLoop(GameRenderer g, KeyboardInputSource keys, Stopwatch timer) {
+        boolean togglePaths = false;
+        while (true) {
+            double start = timer.elapsedTime();
+            while (true) {
+                StdDraw.pause(50);
+                if (g.getWorld().updateDoor()) {
+                    g.updateLevel();
 
-                while (true) {
+                    if (g.getLevel() == 5) {
+                        g.drawVictory();
+                        interactWithKeyboard();
+                    }
 
-                    StdDraw.pause(70);
+                    g.drawGenWorldFrame();
+                    g.setWorld(g.getWorld().createNewLevel());
+                }
+                if (g.getWorld().updateGameOverStatus()) {
+                    g.drawGameOver();
+                    interactWithKeyboard();
+                }
 
-
-                    g.drawWorld(StdDraw.mouseX(), StdDraw.mouseY(), togglePaths);
-
-                    if (StdDraw.hasNextKeyTyped()) {
-
-                        char s = StdDraw.nextKeyTyped();
-
-                        if (s == 'd') {
-                            g.getWorld().moveRight();
-                        }
-
-                        if (s == 'a') {
-                            g.getWorld().moveLeft();
-                        }
-
-                        if (s == 'w') {
-                            g.getWorld().moveUp();
-                        }
-
-                        if (s == 's') {
-                            g.getWorld().moveDown();
-                        }
-
-                        if (s == 'p') {
-                            togglePaths = !togglePaths;
-                        }
-
-                        if (s == 'm') {
-                            String name = "";
-                            g.drawName(name);
-                            while (true) {
-                                s = keys.getNextKey();
-                                if (s == '#') {
-                                    break;
-                                }
-                                if (Character.isLetter(s) || s == ' ') {
-                                     name += s;
-                                }
-                                g.drawName(name);
-                            }
-                            g.getWorld().setAvatarName(name);
-                        }
-
-                        if (s == ':') {
+                g.drawWorld(StdDraw.mouseX(), StdDraw.mouseY(), togglePaths);
+                if (StdDraw.hasNextKeyTyped()) {
+                    char s = StdDraw.nextKeyTyped();
+                    if (s == 'd') {
+                        g.getWorld().moveRight();
+                    }
+                    if (s == 'a') {
+                        g.getWorld().moveLeft();
+                    }
+                    if (s == 'w') {
+                        g.getWorld().moveUp();
+                    }
+                    if (s == 's') {
+                        g.getWorld().moveDown();
+                    }
+                    if (s == 'p') {
+                        togglePaths = !togglePaths;
+                    }
+                    if (s == 'm') {
+                        String name = "";
+                        g.drawName(name);
+                        while (true) {
                             s = keys.getNextKey();
-                            if (s == 'q') {
-                                System.out.println("exited and saved");
-                                FileSystem.save(g.getWorld());
-                                System.exit(0);
+                            if (s == '#') {
+                                break;
                             }
+                            if (Character.isLetter(s) || s == ' ') {
+                                name += s;
+                            }
+                            g.drawName(name);
+                        }
+                        g.getWorld().setAvatarName(name);
+                    }
+                    if (s == ':') {
+                        s = keys.getNextKey();
+                        if (s == 'q') {
+                            System.out.println("exited and saved");
+                            FileSystem.save(g.getWorld());
+                            System.exit(0);
+                            //return;
                         }
                     }
-
-                    double end = timer.elapsedTime();
-
-                    if (end - start > 1) {
-                        //System.out.println("updated");
-                        g.getWorld().updateEnemy();
-                        g.getWorld().updateHealth();
-                        start = timer.elapsedTime();
-                    }
+                }
+                double end = timer.elapsedTime();
+                if (end - start > 2) {
+                    g.getWorld().updateEnemy();
+                    start = timer.elapsedTime();
                 }
             }
         }
@@ -216,9 +230,7 @@ public class Engine {
                     }
                 }
             }
-
             if (!exists) {
-
                 if (s == 'n') {
                     s = sd.getNextKey();
                     while (s != 's') {
@@ -228,13 +240,11 @@ public class Engine {
                     w = new World(num);
                     exists = true;
                 }
-
                 if (s == 'q') {
-                    break;
+                    return null;
                 }
             }
         }
-
         return w.getWorld();
     }
 }
